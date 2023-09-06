@@ -7,9 +7,9 @@ class Button:
                  button_image=None, button_hover_image=None, default_color=(255, 255, 255),
                  default_hover_color=(200, 200, 200), hover_color_transparency=0.5,
                  default_text="", shadow_transparency=0, shadow_offset=(0, 0),
-                 is_visible=True, action=None):
+                 is_visible=True, one_time_action=None, hold_action=None):
         
-        self.name = self.generate_unique_name()
+        self.Name = self.generate_unique_name()
         self.Outer_Panel = outer_panel
         self.Width = width
         self.Height = height
@@ -21,11 +21,21 @@ class Button:
         self.Hover_Color_Transparency = hover_color_transparency
         self.Default_Text = default_text
         self.Shadow_Transparency = shadow_transparency
+        self.Used_Shadow_Transparency = shadow_transparency
         self.Shadow_Offset = shadow_offset
         self.Is_Visible = is_visible
-        self.Action = action
+        self.hold_action = hold_action
+        self.one_time_action = one_time_action
         self.Original_Color = default_color
         self.Is_Hovering = False
+        self._clicked = False
+        self.draw_order = 0
+
+    def get_draw_order_value(self):
+        return self.draw_order
+    
+    def set_draw_order_value(self, int):
+        self.draw_order = int
 
     def set_width(self, width):
         """
@@ -76,6 +86,7 @@ class Button:
         self.name = new_name
 
     def draw(self):
+        self.update()
         if not self.Is_Visible:
             return
 
@@ -91,10 +102,16 @@ class Button:
         ox, oy = self.Outer_Panel.calculate_actual_position()
         screen.set_clip(pygame.Rect(ox, oy, ow, oh))
 
+        # Create a new surface with the same dimensions as the rectangle you want to draw.
+        shadow_surface = pygame.Surface((int(width), int(height)), pygame.SRCALPHA)
+
+        # Fill the surface with the color and transparency you want.
+        shadow_surface.fill((0, 0, 0, int(self.Used_Shadow_Transparency * 255)))  # Assuming self.Shadow_Transparency is between 0 and 1
+
         # Draw shadow
         shadow_x = x + self.Shadow_Offset[0]
         shadow_y = y + self.Shadow_Offset[1]
-        pygame.draw.rect(screen, (0, 0, 0, self.Shadow_Transparency), (shadow_x, shadow_y, width, height))
+        screen.blit(shadow_surface, (shadow_x, shadow_y))
 
         # Draw the button
         if self.Button_Image:
@@ -134,18 +151,27 @@ class Button:
             return False
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
             if self.mouse_in_range():
-                if self.Action:
-                    self.Action()
+                if event.type == pygame.MOUSEBUTTONDOWN and not self._clicked:
+                    # Run the one-time action if the button is clicked
+                    if self.one_time_action:
+                        self.one_time_action()
+                    self._clicked = True  # Set the flag to indicate that the button has been clicked
+
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    self._clicked = False  # Reset the clicked flag when the mouse button is released
+
+                elif event.type == pygame.MOUSEMOTION:
+                    # Check if the mouse is still over the button (hovering)
+                    if event.buttons[0]:  # Left mouse button is pressed
+                        # Run the hold action if the button is being held down
+                        if self.hold_action:
+                            self.hold_action()
 
     def update(self):
         if self.mouse_in_range():
             self.Default_Color = self.Default_Hover_Color  # Change to the hover color
+            self.Used_Shadow_Transparency = self.Shadow_Transparency + (1-self.Shadow_Transparency)/2
         else:
             self.Default_Color = self.Original_Color  # Change back to the original color
-
-    def redraw(self):
-        self.update()
-        if self.Is_Visible:
-            self.draw()
+            self.Used_Shadow_Transparency = self.Shadow_Transparency

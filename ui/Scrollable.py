@@ -36,7 +36,7 @@ class ScrollButton(Button):
         if hasattr(self.Outer_Panel, 'Width') and hasattr(self.Outer_Panel, 'Height'):  # Handle potential AttributeError
             self.set_width(self.Outer_Panel.Width)
             self.set_height(max(20, self.Outer_Panel.Height * 0.1))  # Example height
-            self.redraw()  # Ensure the button is redrawn
+            self.draw()  # Ensure the button is redrawn
 
 
 class ScrollablePanel(Panel):

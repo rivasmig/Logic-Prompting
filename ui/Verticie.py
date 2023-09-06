@@ -20,9 +20,16 @@ class Verticie:
         self.Caption = caption  # This will be an instance of the Caption class in the future
         self.Maintain_Aspect_Ratio = maintain_aspect_ratio
         self.Next_Verticie = None  # For linked list feature
-        
+        self.draw_order = 0
+        self.Name = "vert"
         # Load the icon if provided
         self.load_icon()
+
+    def get_draw_order_value(self):
+        return self.draw_order
+    
+    def set_draw_order_value(self, int):
+        self.draw_order = int
 
     def load_icon(self):
         if self.Icon:

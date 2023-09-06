@@ -20,6 +20,21 @@ class Panel:
         self.Panel_Manager = UI_Manager.UI_Manager()  # Replace with your actual UI_Manager class
         self.Is_Visible = is_visible
         self.Screen = screen
+        self.draw_order = 0
+
+        if (self.draw_order == 0) and (self.Outer_Panel):
+            self.draw_order = self.Outer_Panel.get_draw_order_value() + 1
+        else: 
+            if (self.draw_order == 0):
+                self.draw_order = 1
+        
+        self.Panel_Manager.set_panel_draw_order_value(self.draw_order)
+    
+    def get_draw_order_value(self):
+        return self.draw_order
+    
+    def set_draw_order_value(self, int):
+        self.draw_order = int
 
     def generate_unique_name(self, outer_panel):
         while True:

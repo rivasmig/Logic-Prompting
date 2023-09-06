@@ -5,14 +5,17 @@ import pygame
 
 class Image:
     def __init__(self, outer_panel, image_path, width=None, height=None, position=(0, 0), max_size=None):
-        self.name = self.generate_unique_name()
+        self.Name = self.generate_unique_name()
         self.Outer_Panel = outer_panel
         self.image_path = image_path
         self.position = position
         self.width = width
         self.height = height
         self.max_size = max_size
+        self.is_visible = True
         self.image = self.load_image()
+        self.full_size = False
+        self.draw_order = 0
         
         if self.image and (width is None or height is None):
             img_width, img_height = self.image.get_size()
@@ -20,6 +23,12 @@ class Image:
                 self.width = img_width
             if height is None:
                 self.height = img_height
+
+    def get_draw_order_value(self):
+        return self.draw_order
+    
+    def set_draw_order_value(self, int):
+        self.draw_order = int
 
     def find_screen(self):
         panel = self.Outer_Panel
@@ -57,11 +66,54 @@ class Image:
         print(f"Image file {self.image_path} not found.")
         return None
 
+    def flip_on_vertical_axis(self):
+        """
+        Flip the image on its vertical axis.
+        """
+        if self.image:
+            self.image = pygame.transform.flip(self.image, True, False)
+
     def draw(self):
+        if not self.is_visible:
+            return
+        if self.full_size:
+            self.stretch_fill()
         x, y = self.calculate_actual_position()
         screen = self.find_screen()
         if screen and self.image:
             screen.blit(self.image, (int(x), int(y)))
+
+    def set_transparency(self, transparency_value):
+        """
+        Set the transparency of the image.
+
+        Args:
+        - transparency_value (float): A value between 0 (completely transparent) and 1 (completely opaque).
+        """
+        
+        # Ensure the input value is within the acceptable range
+        transparency_value = max(0, min(transparency_value, 1))
+        
+        # Convert the float value to the corresponding integer value for pygame's set_alpha()
+        alpha_value = int(transparency_value * 255)
+        
+        self.image.set_alpha(alpha_value)
+
+    def stretch_fill(self):
+        self.full_size = True
+        # Get the size of the panel the image is in
+        panel_width, panel_height = self.Outer_Panel.calculate_width_and_height()
+
+        # Perform the actual resizing to fit the panel's dimensions
+        self.image = pygame.transform.scale(self.image, (int(panel_width), int(panel_height)))
+
+        # Update the normalized width and height attributes to match the panel's
+        self.width = 1  # 100% of the panel's width
+        self.height = 1  # 100% of the panel's height
+
+        # Reset the position to the top-left corner of the panel
+        self.position = (0, 0)
+
 
     def resize_image(self, amount):
         # Get the current size of the image
