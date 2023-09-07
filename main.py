@@ -1,7 +1,7 @@
 # will hold the main code for the UI
 import pygame
 from functools import partial
-from ui import Button, Panel, Image, water_ripple
+from pygame_ui import Button, Panel, Image, water_ripple
 
 def play_sound(sound_path, outer_panel, button):
     # Load the sound

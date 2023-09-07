@@ -1,22 +1,20 @@
 import os
 import glob
-import pygame
+import random
+import string
 
 class File_Manager:
     def __init__(self):
-        self.UI_Image_Icons = {}
         self.Folder_Paths = []
         self.Current_Folder = None
         self.Current_Image_Set = None
         self.Current_Image_Index = None
         self.Image_Extensions = ['.png', '.jpg', '.jpeg']
         self.Text_Extensions = ['.txt']
+        self.logic_prompt_extension = '.logic'
 
-    def Set_UI_Icon(self, name_of_ui_element, new_image_path):
-        self.UI_Image_Icons[name_of_ui_element] = new_image_path
-
-    def Get_UI_Icon(self, name_of_ui_element):
-        return self.UI_Image_Icons.get(name_of_ui_element, None)
+    def generate_unique_name(self):
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
 
     def Clear_Folder_Path(self):
         self.Folder_Paths.clear()
@@ -25,7 +23,9 @@ class File_Manager:
         os.makedirs(default_folder[0], exist_ok=True)
         self.Folder_Paths.append(default_folder)
 
-    def Add_Folder_Path(self, folder_path, folder_name):
+    def Add_Folder_Path(self, folder_path, folder_name=None):
+        if folder_name is None:
+            folder_name = self.generate_unique_name()
         self.Folder_Paths.append((folder_path, folder_name))
 
     def Delete_Folder_Path(self, folder_path):
@@ -70,6 +70,3 @@ class File_Manager:
             
             for idx, img_path, caption in self.Current_Image_Set:
                 image_name = os.path.basename(img_path)
-                pygame.image.save(pygame.image.load(img_path), f"{output_folder}/{image_name}")
-                with open(f"{output_folder}/{image_name.split('.')[0]}.txt", 'w') as f:
-                    f.write(caption)
