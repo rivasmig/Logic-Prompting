@@ -1,3 +1,6 @@
+# ----NOTE----
+I'm just starting this out still, *real* progress hasn't been made yet. But still feel free to explore if somehow you found this project.
+
 # Logic Prompting Technical Documentation 
 
 ## Overview 
