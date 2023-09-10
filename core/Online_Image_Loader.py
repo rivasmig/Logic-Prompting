@@ -1,12 +1,10 @@
 # For explanation of this code, you can visit this video: https://www.youtube.com/watch?v=8AyKJxBxx0M&t=172s
-import os
 import requests # pip install requests #to sent GET requests
 from bs4 import BeautifulSoup # pip install bs4 #to parse html(getting data out from html, xml or other markup languages)
 
 # user can input a search keyword and the count of images required
 # download images from google search image
-Google_Image = \
-    'https://www.google.com/search?site=&tbm=isch&source=hp&biw=1873&bih=990&'
+Google_Image = 'https://www.google.com/search?site=&tbm=isch&source=hp&biw=1873&bih=990&'
 
 # The User-Agent request header contains a characteristic string 
 # that allows the network protocol peers to identify the application type, 
@@ -21,17 +19,7 @@ u_agnt = {
     'Connection': 'keep-alive',
 } #write: 'my user agent' in browser to get your browser user agent details
 
-Image_Folder = 'ImageSets/Dogs'
-
-def main():
-    if not os.path.exists(Image_Folder):
-        os.mkdir(Image_Folder)
-    download_images()
-
-def download_images():
-    data = input('Enter your search keyword: ')
-    num_images = int(input('Enter the number of images you want: '))
-    
+def download_images(Image_Folder_Path, data, num_images):
     print('Searching Images....')
     
     search_url = Google_Image + 'q=' + data #'q=' because its a query
@@ -66,12 +54,10 @@ def download_images():
         # open each image link and save the file
         response = requests.get(imagelink)
         
-        imagename = Image_Folder + '/' + data + str(i+1) + '.jpg'
+        imagename = Image_Folder_Path + '/' + data + str(i+1) + '.jpg'
         with open(imagename, 'wb') as file:
             file.write(response.content)
 
     print('Download Completed!')
-    
 
-if __name__ == '__main__':
-    main()
+    return Image_Folder_Path

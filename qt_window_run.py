@@ -6,25 +6,34 @@ from PyQt5 import QtGui as qtg
 from PyQt5 import uic
 from qt_ui import GL_Renderer as gr
 from core import File_Manager as fm
+from PyQt5.QtWidgets import QOpenGLWidget
+from PyQt5.QtGui import QSurfaceFormat
 
 BASEDIR = os.path.dirname(__file__)
 
 Ui_Logic_Window, logic_baseclass = uic.loadUiType(os.path.join(BASEDIR,'qt_ui\LP_Design02.ui' ))
 
-class Logic_Window(logic_baseclass):
+class Logic_Window_alpha(logic_baseclass):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.ui = Ui_Logic_Window()
         self.ui.setupUi(self)
 
         # Create an instance of GL_Renderer
-        self.glWidget = gr.GL_Renderer(self)
+        tabColor = self.ui.logicModes.palette().midlight().color().getRgb()
+        self.glWidget = gr.GL_Renderer(self, bckColor=(tabColor))
+        
+        # Connect the menubar actions
+        self.ui.actionImage_Folder.triggered.connect(self.loadFolder)
+        self.ui.actionImage_Media.triggered.connect(self.addImage)
 
-        # Connect the actionImage_Folder triggered signal to the slot
-        self.ui.actionImage_Folder.triggered.connect(self.loadImageFolder)
+        # Connect label tab buttons
+        self.ui.pointButton.clicked.connect(self.pointButtonClick)
+        self.ui.handButton.clicked.connect(self.handButtonClick)
 
         # Replace carouselView with glWidget
         layout = self.ui.carouselView.parent().layout()
+        
         if layout:
             index = layout.indexOf(self.ui.carouselView)
             layout.removeWidget(self.ui.carouselView)
@@ -35,6 +44,7 @@ class Logic_Window(logic_baseclass):
             self.glWidget.setGeometry(self.ui.carouselView.geometry())
             self.ui.carouselView.deleteLater()
         self.ui.carouselView = self.glWidget
+        self.ui.carouselView.makeCurrent()
         
         timer = qtc.QTimer(self)
         timer.setInterval(20)   # period, in milliseconds
@@ -52,13 +62,13 @@ class Logic_Window(logic_baseclass):
 
         self.show()
 
-    def loadImageFolder(self):
+    def loadFolder(self):
         # Open the folder selection dialog
         folder_path = qtw.QFileDialog.getExistingDirectory(self, "Select Image Folder")
 
         # If a folder was selected, print its path
         if folder_path:
-            self.fileManager.Add_Folder_Path(folder_path)
+            self.fileManager.Add_Folder_Contents(folder_path)
 
     def resizeEvent(self, event):
         # Manually adjust the size of carouselView
@@ -70,7 +80,47 @@ class Logic_Window(logic_baseclass):
         self.ui.swapFrame.move(self.ui.carouselView.width() - self.ui.swapFrame.width() - self.resizeOffset, self.resizeOffset)  # Top-right
         self.ui.toolsFrame.move(self.resizeOffset, self.ui.carouselView.height() - self.ui.toolsFrame.height() - self.resizeOffset)  # Bottom-left
 
+    def pointButtonClick(self):
+        self.changeMouseIcon('Point')
+        #I'll put other stuff in here later
+
+    def handButtonClick(self):
+        self.changeMouseIcon('Hand')
+
+    def changeMouseIcon(self, button_name):
+        add_Icon = None
+        if button_name == 'Point':
+            add_Icon = os.path.join(BASEDIR, 'assets/icons/target.png')
+        if button_name == 'Hand':
+            add_Icon = None
+        
+        if add_Icon:
+            pixmap = qtg.QPixmap(add_Icon).scaled(32, 32, qtc.Qt.KeepAspectRatio, qtc.Qt.SmoothTransformation)
+            cursor = qtg.QCursor(pixmap)
+            qtw.QApplication.setOverrideCursor(cursor)
+        else:
+            qtw.QApplication.restoreOverrideCursor()
+
+    def addImage(self):
+        # Extract image extensions from the Media_Types_and_Extensions dictionary
+        image_extensions = self.fileManager.Media_Types_and_Extensions['Image']
+        
+        # Convert the list of extensions into the format: "*.png *.jpg *.jpeg"
+        filter_string = " ".join(f"*{ext}" for ext in image_extensions)
+        options = qtw.QFileDialog.Options()
+        options |= qtw.QFileDialog.ReadOnly
+        file_name, _ = qtw.QFileDialog.getOpenFileName(self, "Add Image", "", f"Images ({filter_string});;All Files (*)", options=options)
+        
+        if file_name:
+            self.fileManager.Add_Media_By_Path(file_name)
+            if isinstance(self.ui.carouselView, gr.GL_Renderer):
+                self.ui.carouselView.glAddImage(file_name)
+
+
+    def blah():
+        pass
+
 if __name__ == '__main__':
     app = qtw.QApplication(sys.argv)
-    lw = Logic_Window()
+    lw = Logic_Window_alpha()
     sys.exit(app.exec())

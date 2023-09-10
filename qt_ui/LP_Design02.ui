@@ -1132,6 +1132,97 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QTabWidget" name="logicModes">
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="Button">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>193</red>
+            <green>211</green>
+            <blue>254</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>193</red>
+            <green>211</green>
+            <blue>254</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>193</red>
+            <green>211</green>
+            <blue>254</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="Button">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>193</red>
+            <green>211</green>
+            <blue>254</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>193</red>
+            <green>211</green>
+            <blue>254</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>193</red>
+            <green>211</green>
+            <blue>254</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="Button">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>193</red>
+            <green>211</green>
+            <blue>254</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Base">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>193</red>
+            <green>211</green>
+            <blue>254</blue>
+           </color>
+          </brush>
+         </colorrole>
+         <colorrole role="Window">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>193</red>
+            <green>211</green>
+            <blue>254</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
       <property name="mouseTracking">
        <bool>false</bool>
       </property>
@@ -1142,7 +1233,7 @@
        <bool>false</bool>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(152, 174, 217);</string>
+       <string notr="true">background-color: rgb(193, 211, 254);</string>
       </property>
       <property name="tabShape">
        <enum>QTabWidget::Rounded</enum>
@@ -1154,6 +1245,100 @@
        <bool>true</bool>
       </property>
       <widget class="QWidget" name="imageLabelMode">
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>193</red>
+             <green>211</green>
+             <blue>254</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>193</red>
+             <green>211</green>
+             <blue>254</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>193</red>
+             <green>211</green>
+             <blue>254</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>193</red>
+             <green>211</green>
+             <blue>254</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>193</red>
+             <green>211</green>
+             <blue>254</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>193</red>
+             <green>211</green>
+             <blue>254</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>193</red>
+             <green>211</green>
+             <blue>254</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>193</red>
+             <green>211</green>
+             <blue>254</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>193</red>
+             <green>211</green>
+             <blue>254</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <attribute name="title">
         <string>Label Image</string>
        </attribute>
@@ -1171,6 +1356,97 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="palette">
+         <palette>
+          <active>
+           <colorrole role="Button">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>193</red>
+              <green>211</green>
+              <blue>254</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>193</red>
+              <green>211</green>
+              <blue>254</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>193</red>
+              <green>211</green>
+              <blue>254</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </active>
+          <inactive>
+           <colorrole role="Button">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>193</red>
+              <green>211</green>
+              <blue>254</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>193</red>
+              <green>211</green>
+              <blue>254</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>193</red>
+              <green>211</green>
+              <blue>254</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </inactive>
+          <disabled>
+           <colorrole role="Button">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>193</red>
+              <green>211</green>
+              <blue>254</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>193</red>
+              <green>211</green>
+              <blue>254</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>193</red>
+              <green>211</green>
+              <blue>254</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </disabled>
+         </palette>
         </property>
        </widget>
        <widget class="QFrame" name="toolsFrame">
@@ -1543,6 +1819,9 @@ QPushButton:pressed {
           <layout class="QGridLayout" name="gridLayout_2">
            <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
             <widget class="QPushButton" name="playButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="minimumSize">
               <size>
                <width>80</width>
@@ -1599,6 +1878,9 @@ QPushButton:pressed {
               </size>
              </property>
              <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
               <bool>false</bool>
              </property>
             </widget>
@@ -1745,6 +2027,97 @@ QPushButton:pressed {
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="palette">
+         <palette>
+          <active>
+           <colorrole role="Button">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>215</red>
+              <green>227</green>
+              <blue>252</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>215</red>
+              <green>227</green>
+              <blue>252</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>215</red>
+              <green>227</green>
+              <blue>252</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </active>
+          <inactive>
+           <colorrole role="Button">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>215</red>
+              <green>227</green>
+              <blue>252</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>215</red>
+              <green>227</green>
+              <blue>252</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>215</red>
+              <green>227</green>
+              <blue>252</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </inactive>
+          <disabled>
+           <colorrole role="Button">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>215</red>
+              <green>227</green>
+              <blue>252</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>215</red>
+              <green>227</green>
+              <blue>252</blue>
+             </color>
+            </brush>
+           </colorrole>
+           <colorrole role="Window">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>215</red>
+              <green>227</green>
+              <blue>252</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </disabled>
+         </palette>
         </property>
         <property name="styleSheet">
          <string notr="true">QFrame {
@@ -1896,6 +2269,25 @@ QPushButton:pressed {
           </layout>
          </item>
         </layout>
+       </widget>
+       <widget class="QGraphicsView" name="canvasGraphicsView">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>50</y>
+          <width>521</width>
+          <height>361</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgba(0, 255, 0, 0);</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="lineWidth">
+         <number>0</number>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="imageCreateMode">
@@ -2502,12 +2894,20 @@ QPushButton:pressed {
      <addaction name="actionVideo_Set"/>
      <addaction name="actionSound_Set"/>
     </widget>
+    <widget class="QMenu" name="menuLoad_Media">
+     <property name="title">
+      <string>Load Media</string>
+     </property>
+     <addaction name="actionImage_Media"/>
+    </widget>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
     <addaction name="actionOpen"/>
     <addaction name="separator"/>
     <addaction name="menuLoad_Folder"/>
     <addaction name="menuCreate_Set"/>
+    <addaction name="separator"/>
+    <addaction name="menuLoad_Media"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -3140,6 +3540,11 @@ QPushButton:pressed {
   <action name="actionSound_Set">
    <property name="text">
     <string>Sound Set</string>
+   </property>
+  </action>
+  <action name="actionImage_Media">
+   <property name="text">
+    <string>Image Media</string>
    </property>
   </action>
  </widget>
