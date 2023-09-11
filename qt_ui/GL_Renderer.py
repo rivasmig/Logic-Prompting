@@ -251,6 +251,7 @@ class GL_Renderer(QOpenGLWidget):
                     paintThis()
 
                     log_single.fileManager.Current_Media.add_element(newPoint)
+                    self.logSingle.makeLineEdit(self.eventX, self.eventY, 50, 30)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MiddleButton:
@@ -314,6 +315,7 @@ class AddPoint(RendererInterface):
                 self.renderer.paintGL()
 
                 self.logSingle.fileManager.Current_Media.add_element(newPoint)
+                self.logSingle.makeLineEdit(self.eventX, self.eventY, 80, 30)
                 
     def undo(self):
         if self.renderer.canvasElements:
