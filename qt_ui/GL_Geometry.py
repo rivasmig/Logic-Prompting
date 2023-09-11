@@ -55,10 +55,17 @@ class Image(BaseGeometry):
         self.isIcon = isIcon
         
         if self.image_path is not None:
-            self.image = img.open(self.image_path).convert("RGBA") # Ensure image is RGBA
+            self.image = img.open(self.image_path)
+            if self.image.mode != "RGBA":
+                self.image = self.image.convert("RGBA")
             if not self.isIcon:
-                self.width, self.height = self.resize_width_height(self.image.width, 
-                                                                self.image.height)
+                self.width, self.height = self.resize_width_height(self.image.width, self.image.height)
+            else:
+                # Make it completely red while keeping the alpha channel
+                data = np.array(self.image)   # Convert image to numpy array
+                red, green, blue, alpha = data.T  # Transpose data to split each channel
+                data[..., :3] = [255, 0, 0]   # Set RGB values to red
+                self.image = img.fromarray(data)  # Convert back to an image
 
     def adjustedPosition(self):
         curPos = self.position
@@ -156,6 +163,9 @@ class Image(BaseGeometry):
         gl.glTexCoordPointer(2, gl.GL_FLOAT, 20, self.vertVBO + 12)  # 12 bytes offset (3 floats * 4 bytes)
 
         planeIdxArrayCtypes = (ctypes.c_uint * len(self.planeIdxArray))(*self.planeIdxArray)
+
+        gl.glEnable(gl.GL_BLEND)
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
 
         gl.glDrawElements(gl.GL_TRIANGLES, len(self.planeIdxArray), gl.GL_UNSIGNED_INT, planeIdxArrayCtypes)
 

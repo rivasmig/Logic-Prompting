@@ -92,28 +92,36 @@ class LabelTab(GenericTab):
     
     def handButtonClick(self):
         self.changeMouseIcon('Default')
+        self.single.fileManager.Current_Media.set_draw_mode('Click')
     
     def forwardButtonClick(self):
         curIndex = self.single.fileManager.get_media_index()
         self.single.fileManager.update_index(curIndex+1)
         self.single.ui.carouselView.updateRenderer()
+        self.changeMouseIcon('Default')
+        self.single.fileManager.Current_Media.set_draw_mode('Click')
 
     def rewindButtonClick(self):
         curIndex = self.single.fileManager.get_media_index()
         self.single.fileManager.update_index(curIndex-1)
         self.single.ui.carouselView.updateRenderer()
+        self.changeMouseIcon('Default')
+        self.single.fileManager.Current_Media.set_draw_mode('Click')
 
     def boxButtonClick(self):
         if self.single.fileManager.Current_Media is not None:
             self.changeMouseIcon('Circle')
+            self.single.fileManager.Current_Media.set_draw_mode('Box')
 
     def polygonButtonClick(self):
         if self.single.fileManager.Current_Media is not None:
             self.changeMouseIcon('Circle')
+            self.single.fileManager.Current_Media.set_draw_mode('Polygon')
 
     def arrowButtonClick(self):
         if self.single.fileManager.Current_Media is not None:
             self.changeMouseIcon('Diamond')
+            self.single.fileManager.Current_Media.set_draw_mode('Arrow')
 
     def changeMouseIcon(self, assetCall):
         icon_paths = {

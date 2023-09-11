@@ -11,6 +11,14 @@ class MenuBar():
         self.single.ui.actionImage_Folder.triggered.connect(self.loadFolder)
         self.single.ui.actionImage_Media.triggered.connect(self.addImage)
         self.single.ui.actionImage_Set.triggered.connect(self.createImageSet)
+        self.single.ui.actionUndo.triggered.connect(self.thisUndo)
+        self.single.ui.actionRedo.triggered.connect(self.thisRedo)
+
+    def thisUndo(self):
+        self.single.ui.carouselView.invoker.undo()
+
+    def thisRedo(self):
+        self.single.ui.carouselView.invoker.redo()
 
     def createImageSet(self):
         self.create_window = createMediaDialogue.CreateMediaWindow()

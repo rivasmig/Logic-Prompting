@@ -4,6 +4,7 @@ class Element():
         self.single = lw.Logic_Window.getInstance()
         self.attributes = []
     def add_pos_attribute(self, x, y):
+        self.attributes.append('Position')
         self.attributes.append((x,y))
     def add_text_attribute(self, text):
         self.attributes.append(text)

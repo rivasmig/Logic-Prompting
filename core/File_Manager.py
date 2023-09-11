@@ -33,6 +33,9 @@ class Media:
         else:
             print('not an element')
 
+    def get_elements(self):
+        return self.canvasManager.elements
+
     def get_draw_mode(self):
         return self.canvasManager.currentDrawMode
     
@@ -143,8 +146,14 @@ class File_Manager:
 
     def Add_Folder_Contents(self, folder_path):
         folder_contents = glob.glob(os.path.join(folder_path, '*'))
+        
+        # flatten the list of acceptable extensions
+        acceptable_extensions = [ext for extensions in self.Media_Types_and_Extensions.values() for ext in extensions]
+        
         for f in folder_contents:
-            self.Add_Media_By_Path(f)
+            # check if file has an acceptable extension
+            if os.path.splitext(f)[-1] in acceptable_extensions:
+                self.Add_Media_By_Path(f)
         if self.Current_Media_Index == -1:
             self.Current_Media_Index = 0
 

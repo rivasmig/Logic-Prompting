@@ -13,6 +13,7 @@ from .GL_Geometry import *
 
 class GL_Renderer(QOpenGLWidget):
     def __init__(self, parent=None, bckColor=(152,255,174,217)):
+        self.invoker = RendererInvoker()
         format = QSurfaceFormat()
         format.setOption(QSurfaceFormat.DebugContext)
         QSurfaceFormat.setDefaultFormat(format)
@@ -29,6 +30,8 @@ class GL_Renderer(QOpenGLWidget):
         self.isPanning = False  # To check if panning is currently active
         self.panSpeed = 0.04  # Adjust this value to control the panning speed
         self.lastMousePos = None  # Store the last mouse position
+
+        self.MaX, self.miX, self.MaY, self.miY = self.getViewExtentsAtDepth()
 
     def initializeGeometries(self):
         for geometry in self.geometries:
@@ -131,6 +134,22 @@ class GL_Renderer(QOpenGLWidget):
 
     def updateRenderer(self):
         media_index = self.single.fileManager.get_media_index()
+        
+        self.canvasElements.clear()
+        mediaElements = self.single.fileManager.Current_Media.get_elements()
+        if mediaElements:
+            for e in mediaElements:
+                ex, ey = 0 , 0
+                if e.attributes:
+                    posIndex = e.attributes.index('Position')
+                    ex = e.attributes[posIndex+1][0]
+                    ey = e.attributes[posIndex+1][1]
+                    #add image for the point
+                    pointImage = Image(image_path=e.image, width=2, height=2, 
+                                       position=(ex, ey, 0), isIcon=True)
+                    self.canvasElements.append(pointImage)
+                    self.initializeGL()
+                    self.paintGL()
 
         # Reset the geometries list
         self.geometries = [None] * 5
@@ -167,44 +186,44 @@ class GL_Renderer(QOpenGLWidget):
     def getViewExtentsAtDepth(self):
         # Assuming you have a vertical field of view of 45 degrees for simplicity
         # Adjust as necessary
-        depth = self.cameraPosition[2]
+        depth = -self.cameraPosition[2]  # Depth should be positive. Assuming negative Z values are forward in your setup.
         fovY = math.radians(45.0)
-        
+
         # Calculate aspect ratio
         aspectRatio = self.width() / float(self.height())
-        
+
         # Calculate frustum dimensions at the given depth
         frustumHeight = 2.0 * math.tan(fovY / 2) * depth
         frustumWidth = frustumHeight * aspectRatio
-        
-        # Calculate min and max values
-        maxX = frustumWidth / 2
-        minX = -maxX
-        maxY = frustumHeight / 2
-        minY = -maxY
-        
+
+        # Calculate min and max values considering the camera's panning
+        halfWidth = frustumWidth / 2
+        halfHeight = frustumHeight / 2
+
+        maxX = halfWidth
+        minX = -halfWidth
+        maxY = halfHeight
+        minY = -halfHeight
+
         return maxX, minX, maxY, minY
 
     def screenPosToGLPos(self, sx, sy):
+        # Dimensions of the OpenGL widget
         widget_cW = self.width()
         widget_cH = self.height()
-        global_position = self.mapToGlobal(self.pos())
-        global_x = global_position.x()
-        global_y = global_position.y()
-        maxX, minX, maxY, minY = self.getViewExtentsAtDepth()
-        heightFract = (sy-global_y)/widget_cH
-        widthFract = (sx-global_x)/widget_cW
-        
-        if heightFract <= 0.5:
-            newY = maxY*(heightFract+heightFract)
-        else:
-            newY = minY*(heightFract+heightFract)
-        if widthFract <= 0.5:
-            newX = maxX*(widthFract+widthFract)
-        else:
-            newX = minX*(widthFract+widthFract)
 
-        return newX, newY
+        # Get the extents of the view at the current depth
+        maxX, minX, maxY, minY = self.getViewExtentsAtDepth()
+
+        # Calculate the fractions of the width and height that the screen coordinates represent
+        widthFract = sx / widget_cW
+        heightFract = 1 - (sy / widget_cH)  # Subtracting from 1 because OpenGL's origin is bottom-left, while QWidget's is top-left
+
+        # Map these fractions to the OpenGL coordinate space
+        newX = (minX + widthFract * (maxX - minX)) - self.cameraPosition[0]
+        newY = (minY + heightFract * (maxY - minY)) - self.cameraPosition[1]
+
+        return (newX), (newY)
 
     def wheelEvent(self, event):
         # Zoom In
@@ -216,30 +235,30 @@ class GL_Renderer(QOpenGLWidget):
         self.initializeGL()
         self.paintGL()
 
-    def mousePressEvent(self, event):
-        if event.button() == Qt.MiddleButton:
-            self.isPanning = True
-            self.lastMousePos = (event.x(), event.y())
-        if event.button() == Qt.LeftButton:
-            if self.single.fileManager.Current_Media is not None:
-                draw_mode = self.single.fileManager.Current_Media.get_draw_mode()
-                nx, ny = self.screenPosToGLPos(event.x(), event.y())
+    def addPoint(self, log_single, elementList, screenToGL, initializeThis, paintThis, eventX, eventY):
+        if log_single.fileManager.Current_Media is not None:
+                draw_mode = log_single.fileManager.Current_Media.get_draw_mode()
+                nx, ny = screenToGL(eventX, eventY)
                 if draw_mode=='Point':
                     newPoint = point.Point()
                     newPoint.add_pos_attribute(nx, ny)
 
                     #add image for the point
-                    pointImage = Image(image_path=newPoint.image, width=1, height=1, 
+                    pointImage = Image(image_path=newPoint.image, width=2, height=2, 
                                        position=(nx, ny, 0), isIcon=True)
-                    self.canvasElements.append(pointImage)
-                    self.initializeGL()
-                    self.paintGL()
-                    
-                    #create Line Edit
-                    textAttributeEdit = QLineEdit(self.single)
-                    textAttributeEdit.move(event.x(), event.y())
+                    elementList.append(pointImage)
+                    initializeThis()
+                    paintThis()
 
-                    self.single.fileManager.Current_Media.add_element(newPoint)
+                    log_single.fileManager.Current_Media.add_element(newPoint)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MiddleButton:
+            self.isPanning = True
+            self.lastMousePos = (event.x(), event.y())
+        if event.button() == Qt.LeftButton:
+            add_point_cmd = AddPoint(self, self.single, event.x(), event.y())
+            self.invoker.storeAndExecute(add_point_cmd)
     
     def mouseMoveEvent(self, event):
         if self.isPanning:
@@ -255,3 +274,87 @@ class GL_Renderer(QOpenGLWidget):
             self.isPanning = False
             self.lastMousePos = None
 
+class RendererInterface():
+    def __init__(self, renderer):
+        self.renderer: GL_Renderer = renderer
+        self.previous = None
+        self.next = None
+
+    def execute(self):
+        pass
+
+    def undo(self):
+        self.renderer.initializeGL()
+        self.renderer.paintGL()
+
+    def redo(self):
+        self.renderer.initializeGL()
+        self.renderer.paintGL()
+
+class AddPoint(RendererInterface):
+    def __init__(self, GLRenderer, log_single, eventX, eventY):
+        super().__init__(GLRenderer)
+        self.logSingle = log_single
+        self.eventX = eventX
+        self.eventY = eventY
+    
+    def execute(self):
+        if self.logSingle.fileManager.Current_Media is not None:
+            draw_mode = self.logSingle.fileManager.Current_Media.get_draw_mode()
+            nx, ny = self.renderer.screenPosToGLPos(self.eventX, self.eventY)
+            if draw_mode == 'Point':
+                newPoint = point.Point()
+                newPoint.add_pos_attribute(nx, ny)
+                
+                # add image for the point
+                pointImage = Image(image_path=newPoint.image, width=2, height=2, 
+                                   position=(nx, ny, 0), isIcon=True)
+                self.renderer.canvasElements.append(pointImage)
+                self.renderer.initializeGL()
+                self.renderer.paintGL()
+
+                self.logSingle.fileManager.Current_Media.add_element(newPoint)
+                
+    def undo(self):
+        if self.renderer.canvasElements:
+            self.renderer.canvasElements.pop()
+        super().undo()
+    
+    def redo(self):
+        self.execute()
+        super().redo()
+
+
+class RendererInvoker():
+    def __init__(self):
+        self.command_history = []  # This will store the history of commands for undo functionality
+        self.undo_stack = []  # This will store commands that have been undone for redo functionality
+    
+    def storeAndExecute(self, cmd):
+        """
+        Store the command and execute it.
+        """
+        cmd.execute()
+        self.command_history.append(cmd)
+        # Clear the undo stack because a new command has been executed
+        self.undo_stack.clear()
+    
+    def undo(self):
+        """
+        Undo the last command.
+        """
+        if not self.command_history:
+            return
+        cmd = self.command_history.pop()
+        cmd.undo()
+        self.undo_stack.append(cmd)
+    
+    def redo(self):
+        """
+        Redo the last undone command.
+        """
+        if not self.undo_stack:
+            return
+        cmd = self.undo_stack.pop()
+        cmd.redo()
+        self.command_history.append(cmd)
