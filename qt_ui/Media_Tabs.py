@@ -102,6 +102,7 @@ class LabelTab(GenericTab):
             self.single.ui.carouselView.updateRenderer()
             self.single.changeMouseIcon('Default')
             self.single.fileManager.Current_Media.set_draw_mode('Click')
+        self.single.clearNotNeeded()
 
     def rewindButtonClick(self):
         if self.single.fileManager.Current_Media is not None:
@@ -110,6 +111,7 @@ class LabelTab(GenericTab):
             self.single.ui.carouselView.updateRenderer()
             self.single.changeMouseIcon('Default')
             self.single.fileManager.Current_Media.set_draw_mode('Click')
+        self.single.clearNotNeeded()
 
     def boxButtonClick(self):
         if self.single.fileManager.Current_Media is not None:

@@ -78,9 +78,6 @@ class File_Manager:
         self.projectName = None
         self.projectFolder = None
 
-    def generate_unique_string(self):
-        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-
     def get_media_length(self):
         return len(self.Current_Media_Set)
 

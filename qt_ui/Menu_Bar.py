@@ -43,6 +43,7 @@ class MenuBar():
     def newLogProject(self):
         self.saveProj()
         self.single.fileManager = fm.File_Manager()
+        self.single.clearNotNeeded()
         self.single.ui.carouselView.updateRenderer()
         self.single.changeMouseIcon('Click')
 

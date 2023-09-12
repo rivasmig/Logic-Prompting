@@ -44,7 +44,9 @@ class BaseGeometry():
             print("OpenGL error:", error)
     
 class Image(BaseGeometry):
-    def __init__(self, image_path=None, width=20, height=20, position=(0, 0, 0), cameraPosition=(0,0,-30), isIcon=False):
+    def __init__(self, image_path=None, highlight=None, width=20, height=20, 
+                 position=(0, 0, 0), cameraPosition=(0,0,-30), isIcon=False, 
+                 elementName=None):
         super().__init__()
         self.width = width
         self.height = height
@@ -53,6 +55,14 @@ class Image(BaseGeometry):
         self.texture_id = None
         self.camera_position = cameraPosition
         self.isIcon = isIcon
+        self.bufferAmount = 0.5
+        self.image = None
+        self.highlightPath = highlight
+        self.highlightImage = None
+        self.activeImage = None
+        self.isHighlighted = False
+
+        self.elementName = elementName
         
         if self.image_path is not None:
             self.image = img.open(self.image_path)
@@ -60,14 +70,11 @@ class Image(BaseGeometry):
                 self.image = self.image.convert("RGBA")
             if not self.isIcon:
                 self.width, self.height = self.resize_width_height(self.image.width, self.image.height)
-            else:
-                # Make it completely red while keeping the alpha channel
-                # data = np.array(self.image)   # Convert image to numpy array
-                # red, green, blue, alpha = data.T  # Transpose data to split each channel
-                # data[..., :3] = [255, 0, 0]   # Set RGB values to red
-                # self.image = img.fromarray(data)  # Convert back to an image
-                pass
-
+            if self.highlightPath is not None:
+                self.highlightImage = img.open(self.highlightPath)
+                if self.highlightImage.mode != "RGBA":
+                    self.highlightImage = self.highlightImage.convert("RGBA")
+            self.activeImage = self.image
     def adjustedPosition(self):
         curPos = self.position
         curCam = self.camera_position
@@ -87,13 +94,13 @@ class Image(BaseGeometry):
 
     def initializeTextures(self):
         if self.image_path is not None:
-            self.texture_id = self.load_texture(self.image_path)
+            self.texture_id = self.load_texture()
         else:
             print('No image')
 
-    def load_texture(self, image_path):
+    def load_texture(self):
         # Open the image file
-        transposedImage = self.image.transpose(img.FLIP_TOP_BOTTOM)
+        transposedImage = self.activeImage.transpose(img.FLIP_TOP_BOTTOM)
 
         image_data = transposedImage.tobytes("raw", "RGBA", 0, -1)
         
@@ -143,7 +150,6 @@ class Image(BaseGeometry):
         self.planeIdxArray = [0, 1, 2, 2, 3, 0]
 
     def paintGL(self):
-
         # Clear the depth buffer
         gl.glClear(gl.GL_DEPTH_BUFFER_BIT)
 
@@ -177,3 +183,32 @@ class Image(BaseGeometry):
 
     def setCameraPos(self, newPos):
         self.camera_position = newPos
+    
+    def checkCollisionXY(self, ox, oy):
+        left = self.position[0] - (self.width/2 + self.bufferAmount)
+        right = self.position[0] + (self.width/2 + self.bufferAmount)
+        top = self.position[1] - (self.height/2 + self.bufferAmount)
+        bottom = self.position[1] + (self.height/2 + self.bufferAmount)
+
+        if self.highlightImage is not None:
+            if left <= ox <= right and top <= oy <= bottom:
+                if not self.isHighlighted:  # Only change state if not already highlighted
+                    self.isHighlighted = True
+                    self.activeImage = self.highlightImage
+                    self.load_texture()
+                    self.initGeometry()
+                    return True
+                else:
+                    return False
+            else:
+                if self.isHighlighted:  # Only change state if currently highlighted
+                    self.isHighlighted = False
+                    self.activeImage = self.image
+                    self.load_texture()
+                    self.initGeometry()
+                    return True
+                else:
+                    return False
+        else:
+            return False
+            

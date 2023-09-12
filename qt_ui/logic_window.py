@@ -33,7 +33,7 @@ class Logic_Window(logic_baseclass):
             self.menubarCode = None
             self.fileManager = None
             self.createdLineEdit = None
-            self.createdLabels = []
+            self.createdLabel = None
             self.creationRGB = [0,0,255]
             self.CurrentXY = (0,0)
             self.CurrentWH = (0,0)
@@ -62,21 +62,16 @@ class Logic_Window(logic_baseclass):
         line_edit.setPalette(palette)
 
         # Connect the returnPressed signal to the deleteAndReplace method
-        line_edit.returnPressed.connect(self.deleteAndReplace)
+        line_edit.returnPressed.connect(self.deleteLineEdit)
 
         # Store the line edit in self.createdLineEdit
         self.createdLineEdit = line_edit
         line_edit.show()
         line_edit.setFocus()
 
-    def makeLabelAtPos(self, x, y, width, height):
-         # Create a QLabel at the line edit's x and y, smaller width and height
-        x, y, width, height = self.createdLineEdit.geometry().getRect()
-        new_width = width - 10  # Example adjusted width
-        new_height = height - 10  # Example adjusted height
-
-        label = QLabel(self.createdLineEdit.text(), self)
-        label.setGeometry(x, y, new_width, new_height)
+    def makeLabelAtPos(self, x, y, width, height, text):
+        label = QLabel(text, self)
+        label.setGeometry(x, y, width, height)
 
         # Set the text color to self.creationRGB
         palette = label.palette()
@@ -84,9 +79,16 @@ class Logic_Window(logic_baseclass):
         label.setPalette(palette)
 
         # Add to self.createdLabels
-        self.createdLabels.append(label)
+        self.createdLabel = label
+        self.createdLabel.show()
+    
+    def deleteExistingLabel(self):
+        if self.createdLabel:
+            self.createdLabel.hide()
+            self.createdLabel.deleteLater()
+            self.createdLabel= None
 
-    def deleteAndReplace(self):
+    def deleteLineEdit(self):
         if self.createdLineEdit:
             text = self.createdLineEdit.text()
             media = self.fileManager.Current_Media
@@ -95,6 +97,7 @@ class Logic_Window(logic_baseclass):
             
             media.print_elements()
             # Delete the line edit
+            self.createdLineEdit.hide()
             self.createdLineEdit.deleteLater()
             self.createdLineEdit = None
     
@@ -131,4 +134,10 @@ class Logic_Window(logic_baseclass):
 
     def resizeEvent(self, event):
         self.tabResize()
+    
+    def clearNotNeeded(self):
+        if self.createdLineEdit:
+            self.deleteLineEdit()
+        if self.createdLabel:
+            self.deleteExistingLabel()
     

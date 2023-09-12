@@ -22,6 +22,7 @@ class GL_Renderer(QOpenGLWidget):
         self.geometries: List[BaseGeometry] = [None] * 5
         self.canvasElements: List[BaseGeometry] = []
         self.iconSize = 0.5
+        self.setMouseTracking(True)
         self.c = (bckColor[0]/255, bckColor[1]/255, bckColor[2]/255, 1)
 
         # ui movement stuff
@@ -145,7 +146,7 @@ class GL_Renderer(QOpenGLWidget):
                         ex = e.attributes[posIndex+1][0]
                         ey = e.attributes[posIndex+1][1]
                         #add image for the point
-                        pointImage = Image(image_path=e.image, 
+                        pointImage = Image(image_path=e.image, highlight=e.highlightImage,
                                            width=self.iconSize, height=self.iconSize, 
                                         position=(ex, ey, 0), isIcon=True)
                         self.canvasElements.append(pointImage)
@@ -272,6 +273,26 @@ class GL_Renderer(QOpenGLWidget):
             self.lastMousePos = (event.x(), event.y())
             self.initializeGL()
             self.paintGL()
+        changed = False
+        for c in self.canvasElements:
+            mx, my = self.screenPosToGLPos(event.x(), event.y())
+            if c.checkCollisionXY(mx, my):  # Modify the method to return True if changes are made
+                changed = True
+                if c.isHighlighted:
+                    myEle = None
+                    for e in self.single.fileManager.Current_Media.get_elements():
+                        if e.localName == c.elementName:
+                            myEle = e
+                    if myEle is not None:
+                        self.single.makeLabelAtPos(event.x(), event.y(), 
+                                                70, 20, myEle.getTextAttribute())
+                else:
+                    self.single.deleteExistingLabel()
+        if changed:  # Only update OpenGL if changes were made
+            self.initializeGL()
+            self.paintGL()
+        
+        super().mouseMoveEvent(event)
     
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.MiddleButton:
@@ -311,9 +332,9 @@ class AddPoint(RendererInterface):
                 newPoint.add_pos_attribute(nx, ny)
                 
                 # add image for the point
-                pointImage = Image(image_path=newPoint.image, 
+                pointImage = Image(image_path=newPoint.image, highlight=newPoint.highlightImage,
                                    width=self.renderer.iconSize, height=self.renderer.iconSize, 
-                                   position=(nx, ny, 0), isIcon=True)
+                                   position=(nx, ny, 0), isIcon=True, elementName=newPoint.localName)
                 self.renderer.canvasElements.append(pointImage)
                 self.renderer.initializeGL()
                 self.renderer.paintGL()
