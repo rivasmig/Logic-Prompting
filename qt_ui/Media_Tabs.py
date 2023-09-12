@@ -87,72 +87,46 @@ class LabelTab(GenericTab):
 
     def pointButtonClick(self):
         if self.single.fileManager.Current_Media is not None:
-            self.changeMouseIcon('Point')
+            self.single.changeMouseIcon('Point')
             self.single.fileManager.Current_Media.set_draw_mode('Point')
     
     def handButtonClick(self):
-        self.changeMouseIcon('Default')
-        self.single.fileManager.Current_Media.set_draw_mode('Click')
+        if self.single.fileManager.Current_Media is not None:
+            self.single.changeMouseIcon('Default')
+            self.single.fileManager.Current_Media.set_draw_mode('Click')
     
     def forwardButtonClick(self):
-        curIndex = self.single.fileManager.get_media_index()
-        self.single.fileManager.update_index(curIndex+1)
-        self.single.ui.carouselView.updateRenderer()
-        self.changeMouseIcon('Default')
-        self.single.fileManager.Current_Media.set_draw_mode('Click')
+        if self.single.fileManager.Current_Media is not None:
+            curIndex = self.single.fileManager.get_media_index()
+            self.single.fileManager.update_index(curIndex+1)
+            self.single.ui.carouselView.updateRenderer()
+            self.single.changeMouseIcon('Default')
+            self.single.fileManager.Current_Media.set_draw_mode('Click')
 
     def rewindButtonClick(self):
-        curIndex = self.single.fileManager.get_media_index()
-        self.single.fileManager.update_index(curIndex-1)
-        self.single.ui.carouselView.updateRenderer()
-        self.changeMouseIcon('Default')
-        self.single.fileManager.Current_Media.set_draw_mode('Click')
+        if self.single.fileManager.Current_Media is not None:
+            curIndex = self.single.fileManager.get_media_index()
+            self.single.fileManager.update_index(curIndex-1)
+            self.single.ui.carouselView.updateRenderer()
+            self.single.changeMouseIcon('Default')
+            self.single.fileManager.Current_Media.set_draw_mode('Click')
 
     def boxButtonClick(self):
         if self.single.fileManager.Current_Media is not None:
-            self.changeMouseIcon('Circle')
+            self.single.changeMouseIcon('Circle')
             self.single.fileManager.Current_Media.set_draw_mode('Box')
 
     def polygonButtonClick(self):
         if self.single.fileManager.Current_Media is not None:
-            self.changeMouseIcon('Circle')
+            self.single.changeMouseIcon('Circle')
             self.single.fileManager.Current_Media.set_draw_mode('Polygon')
 
     def arrowButtonClick(self):
         if self.single.fileManager.Current_Media is not None:
-            self.changeMouseIcon('Diamond')
+            self.single.changeMouseIcon('Diamond')
             self.single.fileManager.Current_Media.set_draw_mode('Arrow')
 
-    def changeMouseIcon(self, assetCall):
-        icon_paths = {
-            'Point': (os.path.join(self.single.BASEDIR, 'assets/icons/target.png'), 'Normal'),
-            'Circle': (os.path.join(self.single.BASEDIR, 'assets/icons/circle.png'), 'Smallest'),
-            'Diamond': (os.path.join(self.single.BASEDIR, 'assets/icons/diamond.png'), 'Smaller')
-        }
-
-        size_map = {
-            'Normal': (32, 32),
-            'Smaller': (22, 22),
-            'Smallest': (18, 18)
-        }
-
-        # If assetCall is Default or not in icon_paths, restore the cursor and return
-        if assetCall == 'Default' or assetCall not in icon_paths:
-            # Restore the cursor until there's no more overridden cursor
-            while qtw.QApplication.overrideCursor():
-                qtw.QApplication.restoreOverrideCursor()
-            return
-
-        add_Icon, sizeCall = icon_paths[assetCall]
-        w, h = size_map[sizeCall]
-        pixmap = qtg.QPixmap(add_Icon).scaled(w, h, qtc.Qt.KeepAspectRatio, qtc.Qt.SmoothTransformation)
-        cursor = qtg.QCursor(pixmap)
-
-        # Restore the cursor until there's no more overridden cursor to ensure the stack is empty
-        while qtw.QApplication.overrideCursor():
-            qtw.QApplication.restoreOverrideCursor()
-
-        qtw.QApplication.setOverrideCursor(cursor)
+    
 
 class CreateTab(GenericTab):
     pass

@@ -62,10 +62,11 @@ class Image(BaseGeometry):
                 self.width, self.height = self.resize_width_height(self.image.width, self.image.height)
             else:
                 # Make it completely red while keeping the alpha channel
-                data = np.array(self.image)   # Convert image to numpy array
-                red, green, blue, alpha = data.T  # Transpose data to split each channel
-                data[..., :3] = [255, 0, 0]   # Set RGB values to red
-                self.image = img.fromarray(data)  # Convert back to an image
+                # data = np.array(self.image)   # Convert image to numpy array
+                # red, green, blue, alpha = data.T  # Transpose data to split each channel
+                # data[..., :3] = [255, 0, 0]   # Set RGB values to red
+                # self.image = img.fromarray(data)  # Convert back to an image
+                pass
 
     def adjustedPosition(self):
         curPos = self.position

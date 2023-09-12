@@ -7,7 +7,6 @@ from OpenGL import GLU
 from typing import List
 from PyQt5.QtGui import QSurfaceFormat, QVector4D, QMatrix4x4
 from draw_elements import point, element
-from core import Canvas_Manager as cm
 from .logic_window import Logic_Window
 from .GL_Geometry import *
 
@@ -22,6 +21,7 @@ class GL_Renderer(QOpenGLWidget):
         self.parent = parent
         self.geometries: List[BaseGeometry] = [None] * 5
         self.canvasElements: List[BaseGeometry] = []
+        self.iconSize = 0.5
         self.c = (bckColor[0]/255, bckColor[1]/255, bckColor[2]/255, 1)
 
         # ui movement stuff
@@ -134,42 +134,45 @@ class GL_Renderer(QOpenGLWidget):
 
     def updateRenderer(self):
         media_index = self.single.fileManager.get_media_index()
-        
-        self.canvasElements.clear()
-        mediaElements = self.single.fileManager.Current_Media.get_elements()
-        if mediaElements:
-            for e in mediaElements:
-                ex, ey = 0 , 0
-                if e.attributes:
-                    posIndex = e.attributes.index('Position')
-                    ex = e.attributes[posIndex+1][0]
-                    ey = e.attributes[posIndex+1][1]
-                    #add image for the point
-                    pointImage = Image(image_path=e.image, width=2, height=2, 
-                                       position=(ex, ey, 0), isIcon=True)
-                    self.canvasElements.append(pointImage)
-                    self.initializeGL()
-                    self.paintGL()
+        if media_index != -1:
+            self.canvasElements.clear()
+            mediaElements = self.single.fileManager.Current_Media.get_elements()
+            if mediaElements:
+                for e in mediaElements:
+                    ex, ey = 0 , 0
+                    if e.attributes:
+                        posIndex = e.attributes.index('Position')
+                        ex = e.attributes[posIndex+1][0]
+                        ey = e.attributes[posIndex+1][1]
+                        #add image for the point
+                        pointImage = Image(image_path=e.image, 
+                                           width=self.iconSize, height=self.iconSize, 
+                                        position=(ex, ey, 0), isIcon=True)
+                        self.canvasElements.append(pointImage)
+                        self.initializeGL()
+                        self.paintGL()
 
-        # Reset the geometries list
-        self.geometries = [None] * 5
+            # Reset the geometries list
+            self.geometries = [None] * 5
 
-        # Set the center geometry
-        center_path = self.single.fileManager.get_media_path_by_index(media_index)
-        self.geometries[2] = Image(image_path=center_path) if center_path else None
+            # Set the center geometry
+            center_path = self.single.fileManager.get_media_path_by_index(media_index)
+            self.geometries[2] = Image(image_path=center_path) if center_path else None
 
-        # Set the geometries to the right of center
-        for offset in range(1, 3):  # for indices 3 and 4
-            path = self.single.fileManager.get_media_path_by_index(media_index + offset)
-            if path:
-                self.geometries[2 + offset] = Image(image_path=path)
+            # Set the geometries to the right of center
+            for offset in range(1, 3):  # for indices 3 and 4
+                path = self.single.fileManager.get_media_path_by_index(media_index + offset)
+                if path:
+                    self.geometries[2 + offset] = Image(image_path=path)
 
-        # Set the geometries to the left of center
-        for offset in range(1, 3):  # for indices 1 and 0
-            path = self.single.fileManager.get_media_path_by_index(media_index - offset)
-            if path:
-                self.geometries[2 - offset] = Image(image_path=path)
-
+            # Set the geometries to the left of center
+            for offset in range(1, 3):  # for indices 1 and 0
+                path = self.single.fileManager.get_media_path_by_index(media_index - offset)
+                if path:
+                    self.geometries[2 - offset] = Image(image_path=path)
+        else:
+            self.geometries = [None] * 5
+            self.canvasElements = []
         self.initializeGeometries()
 
     def paintGL(self):
@@ -308,14 +311,15 @@ class AddPoint(RendererInterface):
                 newPoint.add_pos_attribute(nx, ny)
                 
                 # add image for the point
-                pointImage = Image(image_path=newPoint.image, width=2, height=2, 
+                pointImage = Image(image_path=newPoint.image, 
+                                   width=self.renderer.iconSize, height=self.renderer.iconSize, 
                                    position=(nx, ny, 0), isIcon=True)
                 self.renderer.canvasElements.append(pointImage)
                 self.renderer.initializeGL()
                 self.renderer.paintGL()
 
-                self.logSingle.fileManager.Current_Media.add_element(newPoint)
                 self.logSingle.makeLineEdit(self.eventX, self.eventY, 80, 30)
+                self.logSingle.fileManager.Current_Media.add_element(newPoint)
                 
     def undo(self):
         if self.renderer.canvasElements:
@@ -325,7 +329,6 @@ class AddPoint(RendererInterface):
     def redo(self):
         self.execute()
         super().redo()
-
 
 class RendererInvoker():
     def __init__(self):

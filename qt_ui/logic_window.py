@@ -2,6 +2,9 @@ import os
 from PyQt5.QtWidgets import QLineEdit, QLabel
 from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtCore import Qt
+from PyQt5 import QtGui as qtg
+from PyQt5 import QtWidgets as qtw
+from PyQt5 import QtCore as qtc
 from PyQt5 import uic
 
 BASEDIR = os.path.dirname(__file__)
@@ -66,30 +69,65 @@ class Logic_Window(logic_baseclass):
         line_edit.show()
         line_edit.setFocus()
 
+    def makeLabelAtPos(self, x, y, width, height):
+         # Create a QLabel at the line edit's x and y, smaller width and height
+        x, y, width, height = self.createdLineEdit.geometry().getRect()
+        new_width = width - 10  # Example adjusted width
+        new_height = height - 10  # Example adjusted height
+
+        label = QLabel(self.createdLineEdit.text(), self)
+        label.setGeometry(x, y, new_width, new_height)
+
+        # Set the text color to self.creationRGB
+        palette = label.palette()
+        palette.setColor(QPalette.WindowText, QColor(*self.creationRGB))
+        label.setPalette(palette)
+
+        # Add to self.createdLabels
+        self.createdLabels.append(label)
+
     def deleteAndReplace(self):
-        print('Deleted')
-
         if self.createdLineEdit:
-            # Create a QLabel at the line edit's x and y, smaller width and height
-            x, y, width, height = self.createdLineEdit.geometry().getRect()
-            new_width = width - 10  # Example adjusted width
-            new_height = height - 10  # Example adjusted height
-
-            label = QLabel(self.createdLineEdit.text(), self)
-            label.setGeometry(x, y, new_width, new_height)
-
-            # Set the text color to self.creationRGB
-            palette = label.palette()
-            palette.setColor(QPalette.WindowText, QColor(*self.creationRGB))
-            label.setPalette(palette)
-
-            # Add to self.createdLabels
-            self.createdLabels.append(label)
-            label.show()
-
+            text = self.createdLineEdit.text()
+            media = self.fileManager.Current_Media
+            if media:
+                media.add_text_attribute_to_latest(text)
+            
+            media.print_elements()
             # Delete the line edit
             self.createdLineEdit.deleteLater()
             self.createdLineEdit = None
+    
+    def changeMouseIcon(self, assetCall):
+        icon_paths = {
+            'Point': (os.path.join(self.BASEDIR, 'assets/icons/target.png'), 'Normal'),
+            'Circle': (os.path.join(self.BASEDIR, 'assets/icons/circle.png'), 'Smallest'),
+            'Diamond': (os.path.join(self.BASEDIR, 'assets/icons/diamond.png'), 'Smaller')
+        }
+
+        size_map = {
+            'Normal': (32, 32),
+            'Smaller': (22, 22),
+            'Smallest': (18, 18)
+        }
+
+        # If assetCall is Default or not in icon_paths, restore the cursor and return
+        if assetCall == 'Default' or assetCall not in icon_paths:
+            # Restore the cursor until there's no more overridden cursor
+            while qtw.QApplication.overrideCursor():
+                qtw.QApplication.restoreOverrideCursor()
+            return
+
+        add_Icon, sizeCall = icon_paths[assetCall]
+        w, h = size_map[sizeCall]
+        pixmap = qtg.QPixmap(add_Icon).scaled(w, h, qtc.Qt.KeepAspectRatio, qtc.Qt.SmoothTransformation)
+        cursor = qtg.QCursor(pixmap)
+
+        # Restore the cursor until there's no more overridden cursor to ensure the stack is empty
+        while qtw.QApplication.overrideCursor():
+            qtw.QApplication.restoreOverrideCursor()
+
+        qtw.QApplication.setOverrideCursor(cursor)
 
     def resizeEvent(self, event):
         self.tabResize()
