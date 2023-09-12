@@ -1,6 +1,21 @@
 # ----NOTE----
 I'm just starting this out still, *real* progress hasn't been made yet. But still feel free to explore if somehow you found this project.
 
+## Goals
+
+The goals for this repo is to have a centralized software with the following features:
+  - easy to use logic prompting ui tools for captioning and creating media (images, video, sound, and hopefully someday - video games)
+ - users can turn that data into text-image pairs for generative ai training
+ - users can upload that data to a cloud enviornment that has other users data as well (to easily accumulate a large amount of text-image data to train the model)
+ - users can download the data stored in that cloud location
+ - users can access pretrained models that have been trained by all the data uploaded to the cloud
+ - users can train their own data over most generative ai models, or over a pretrained model
+ - users can generate media based off these pretrained models, and logic prompting tools
+ 
+ Other goals also include:
+ - using newest research (https://arxiv.org/pdf/2307.08041.pdf) to have THIS version of the model to use. This is also favored because a system like logic prompting would benefit from an LLM generating media vs a diffusion model. Though, collecting the data is the first priority
+
+
 # Logic Prompting Technical Documentation 
 
 ## Overview 
@@ -67,20 +82,6 @@ Defining a function 'if near a car then happy else sad':
 **Function-based Color and Activity Change**:  
 Define two functions: one for a dog's color based on surroundings, and one for its activity. If a dog is near a pond, it's blue and swimming; if near a ball, it's yellow and playing.  
 ⟐ λ δ Δ 🌊🐶🎨 Δζ 🐶ζ Ω π Λ Λ χ🐶χ Λ χΘ pond Θχ Λ Λ Ψ near Ψ Λ πθ &τ blue τ& θ ε &τ yellow τ& ε Ω δ λ ⟐ | ⟐ λ δ Δ 🐶🎭 Δζ 🐶ζ Ω π Λ Λ χ🐶χ Λ χΘ pond Θχ Λ Λ Ψ near Ψ Λ πθ &τ swimming τ& θε π Λ Λ χ🐶χ Λ χΘ ball Θχ Λ Λ Ψ near Ψ Λ πθ &τ playing τ& θ ε Ω δ λ ⟐
-
-## Goals
-
-The goals for this repo is to have a centralized software with the following features:
-  - easy to use logic prompting ui tools for captioning and creating media (images, video, sound, and hopefully someday - video games)
- - users can turn that data into text-image pairs for generative ai training
- - users can upload that data to a cloud enviornment that has other users data as well (to easily accumulate a large amount of text-image data to train the model)
- - users can download the data stored in that cloud location
- - users can access pretrained models that have been trained by all the data uploaded to the cloud
- - users can train their own data over most generative ai models, or over a pretrained model
- - users can generate media based off these pretrained models, and logic prompting tools
- 
- Other goals also include:
- - using newest research (https://arxiv.org/pdf/2307.08041.pdf) to have THIS version of the model to use. This is also favored because a system like logic prompting would benefit from an LLM generating media vs a diffusion model. Though, collecting the data is the first priority
 
 ## Conclusion 
 
