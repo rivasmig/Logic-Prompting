@@ -1,8 +1,11 @@
-# Logic Prompting Technical Documentation 
+# Logic Prompting
 
 ## Overview 
 
 Logic Prompting is a functional programming language designed for creating prompts in generative AI systems. It defines and integrates elements with their attributes to instruct generative models, making complex media generation simpler and more intuitive.
+
+# Visual Demonstration
+![Logic Prompting Alpha Usage](LogicPromptingAlphaUsage.gif)
 
 ## Basic Constructs 
 
