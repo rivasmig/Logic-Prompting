@@ -15,9 +15,9 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../assets/icons/logic_icon16x16.png</normaloff>../assets/icons/logic_icon16x16.png</iconset>
+    <normaloff>../../assets/icons/logic_icon16x16.png</normaloff>../../assets/icons/logic_icon16x16.png</iconset>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -127,7 +127,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../assets/icons/rewind.png</normaloff>../assets/icons/rewind.png</iconset>
+            <normaloff>../../assets/icons/rewind.png</normaloff>../../assets/icons/rewind.png</iconset>
           </property>
          </widget>
         </item>
@@ -150,7 +150,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../assets/icons/forward.png</normaloff>../assets/icons/forward.png</iconset>
+            <normaloff>../../assets/icons/forward.png</normaloff>../../assets/icons/forward.png</iconset>
           </property>
          </widget>
         </item>
@@ -209,16 +209,16 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="exportAsPairsButton">
+       <widget class="QPushButton" name="createPairsButton">
         <property name="text">
-         <string>Export As Pairs</string>
+         <string>Create Pairs</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="cancelButton">
+       <widget class="QPushButton" name="exportAsPairsButton">
         <property name="text">
-         <string>Cancel</string>
+         <string>Export As Pairs</string>
         </property>
        </widget>
       </item>

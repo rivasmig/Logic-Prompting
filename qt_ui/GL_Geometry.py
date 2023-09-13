@@ -44,9 +44,9 @@ class BaseGeometry():
             print("OpenGL error:", error)
     
 class Image(BaseGeometry):
-    def __init__(self, image_path=None, highlight=None, width=20, height=20, 
-                 position=(0, 0, 0), cameraPosition=(0,0,-30), isIcon=False, 
-                 elementName=None):
+    def __init__(self, image_path=None, width=20, height=20, 
+                 position=(0, 0, 0), cameraPosition=(0,0,-30), 
+                 parentElement=None):
         super().__init__()
         self.width = width
         self.height = height
@@ -54,27 +54,55 @@ class Image(BaseGeometry):
         self.image_path = image_path 
         self.texture_id = None
         self.camera_position = cameraPosition
-        self.isIcon = isIcon
+        self.parentElement = parentElement
+        self.elementEmpty = self.parentElement is None
+        self.isIcon = self.parentElement is not None
         self.bufferAmount = 0.5
         self.image = None
-        self.highlightPath = highlight
+        self.highlightPath = None
         self.highlightImage = None
+        self.emptyImagePath = None
+        self.emptyImage = None
         self.activeImage = None
         self.isHighlighted = False
-
-        self.elementName = elementName
+        self.elementName = None
         
+        if self.isIcon:
+            self.image_path = parentElement.image
+            self.highlightPath = parentElement.highlightImage
+            self.emptyImagePath = parentElement.emptyImage
+
+            self.highlightImage = img.open(self.highlightPath)
+            if self.highlightImage.mode != "RGBA":
+                self.highlightImage = self.highlightImage.convert("RGBA")
+
+            self.emptyImage = img.open(self.emptyImagePath)
+            if self.emptyImage.mode != "RGBA":
+                self.emptyImage = self.emptyImage.convert("RGBA")
+            
+            self.elementName = self.parentElement.localName
+
         if self.image_path is not None:
             self.image = img.open(self.image_path)
             if self.image.mode != "RGBA":
                 self.image = self.image.convert("RGBA")
-            if not self.isIcon:
                 self.width, self.height = self.resize_width_height(self.image.width, self.image.height)
-            if self.highlightPath is not None:
-                self.highlightImage = img.open(self.highlightPath)
-                if self.highlightImage.mode != "RGBA":
-                    self.highlightImage = self.highlightImage.convert("RGBA")
+            
             self.activeImage = self.image
+            self.iconCheckForText()
+
+    def setParentElement(self, ele):
+        self.parentElement = ele
+        self.iconCheckForText()
+
+    def iconCheckForText(self):
+        if self.isIcon:
+            if self.parentElement.getTextAttribute() != '':
+                if self.activeImage != self.highlightImage:
+                    self.activeImage = self.image
+            else:
+                self.activeImage = self.emptyImage
+
     def adjustedPosition(self):
         curPos = self.position
         curCam = self.camera_position
@@ -93,7 +121,7 @@ class Image(BaseGeometry):
         return newW, newH
 
     def initializeTextures(self):
-        if self.image_path is not None:
+        if self.activeImage is not None:
             self.texture_id = self.load_texture()
         else:
             print('No image')

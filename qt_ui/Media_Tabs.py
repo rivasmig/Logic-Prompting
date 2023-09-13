@@ -9,6 +9,7 @@ from PyQt5 import QtCore as qtc
 class GenericTab():
     def __init__(self):
         self.single = lw.Logic_Window.getInstance()
+        # maybe add the canvas stuff in later too, maybe every tab will have a canvas?
     
     def thisResizeEvent(self):
         pass

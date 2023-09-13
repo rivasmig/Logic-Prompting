@@ -19,7 +19,7 @@ u_agnt = {
     'Accept-Language': 'en-US,en;q=0.8',
     'Connection': 'keep-alive',
 } #write: 'my user agent' in browser to get your browser user agent details
-Ui_Create_Window, create_baseclass = uic.loadUiType(os.path.join(BASEDIR,'folderCreate.ui' ))
+Ui_Create_Window, create_baseclass = uic.loadUiType(os.path.join(BASEDIR,'ui_files/folderCreate.ui' ))
 
 class CreateMediaWindow(create_baseclass):
     def __init__(self, *args, **kwargs):
@@ -33,7 +33,6 @@ class CreateMediaWindow(create_baseclass):
         self.fileType = ''
         self.imageNumberCount = ''
 
-        # You may want to connect the close button (or OK button) to a method that emits the signal
         self.ui.createMediaButton.clicked.connect(self.createMedia)  # Assuming closeButton is the name of your button
         self.ui.FileBrowseButton.clicked.connect(self.fileBrowse)
         self.ui.mediaProgressBar.setMaximum(100)

@@ -6,61 +6,9 @@ import json
 from typing import List
 from draw_elements import element as el
 from draw_elements import point
+from core.media import Media
 
 BASEDIR = os.path.dirname(__file__)
-
-class Media:
-    def __init__(self, type='Generic', file_path='', parent_folder=None, name=None):
-        self.invoker = MediaInvoker()
-        self.type = type
-        self.file_path = file_path
-        self.parent_folder = parent_folder
-        self.name = name
-        self.screen_position = (0,0)
-        self.screen_widthHeight = (0,0)
-        self.currentDrawMode = 'Select'
-        self.currentBrushTrailImage = None
-        self.elements: List[el.Element] = []
-
-        if not self.check_path():
-            print('broken file')
-
-        if self.parent_folder is None:
-            self.parent_folder = os.path.basename(os.path.dirname(self.file_path))
-
-        if self.name is None:
-            self.name = os.path.basename(self.file_path)
-
-    def add_element(self, element):
-        add_element_cmd = AddElementToMedia(self, element)
-        self.invoker.storeAndExecute(add_element_cmd)
-
-    def add_text_attribute_to_latest(self, text):
-        add_text_attribute = AddTextAttribute(self, text)
-        self.invoker.storeAndExecute(add_text_attribute)
-
-    def print_elements(self):
-        elements = self.get_elements()
-        if elements:
-            for e in elements:
-                print(e.attributes)
-
-    def get_elements(self):
-        return self.elements
-
-    def get_draw_mode(self):
-        return self.currentDrawMode
-    
-    def set_draw_mode(self, mode):
-        self.currentDrawMode = mode
-    
-    def check_path(self):
-        return os.path.exists(self.file_path)
-    
-    def __eq__(self, other):
-        if isinstance(other, Media):
-            return self.parent_folder == other.parent_folder and self.name == other.name
-        return False
 
 class File_Manager:
     def __init__(self):
@@ -73,7 +21,7 @@ class File_Manager:
         }
         self.Current_Media_Set: List[Media] = []
         self.Current_Media_Index = -1
-        self.Current_Media: Media = None
+        self.Current_Media:Media = None
         self.Logic_Extension = '.logic'
         self.projectName = None
         self.projectFolder = None
@@ -144,7 +92,8 @@ class File_Manager:
                 self.Current_Media_Set.remove(m)
                 if self.Current_Media == m:
                     prev_index = max(0, self.Current_Media_Index - 1)
-                    next_index = min(len(self.Current_Media_Set) - 1, self.Current_Media_Index + 1)
+                    next_index = min(len(self.Current_Media_Set) - 1, 
+                                     self.Current_Media_Index + 1)
                     self.reset_current(self.Current_Media_Set[prev_index], 
                                        self.Current_Media_Set[next_index], True)
                 else:
@@ -159,7 +108,9 @@ class File_Manager:
         folder_contents = glob.glob(os.path.join(folder_path, '*'))
         
         # flatten the list of acceptable extensions
-        acceptable_extensions = [ext for extensions in self.Media_Types_and_Extensions.values() for ext in extensions]
+        acceptable_extensions = [ext for extensions 
+                                 in self.Media_Types_and_Extensions.values() 
+                                 for ext in extensions]
         
         for f in folder_contents:
             # check if file has an acceptable extension
@@ -183,6 +134,7 @@ class File_Manager:
     def serialize_element(self, element):
         """Convert an Element object into a serializable dictionary."""
         serialized_element = {
+            'localName': element.localName,
             'type': element.attributes[1],
             'attributes': element.attributes
         }
@@ -206,6 +158,7 @@ class File_Manager:
             element = el.Element()
 
         element.attributes = serialized_element['attributes']
+        element.localName = serialized_element['localName']
         return element
 
     def Load_Logic_File(self, logic_file_path):
@@ -221,7 +174,8 @@ class File_Manager:
             for media_data in data['mediaSet']:
                 media = Media(media_data['type'], media_data['file_path'], 
                             media_data['parent_folder'], media_data['name'])
-                media.elements = [self.deserialize_element(element_data) for element_data in media_data['elements']]
+                media.elements = [self.deserialize_element(element_data) 
+                                  for element_data in media_data['elements']]
                 self.Current_Media_Set.append(media)
             
             # Set the current media index
@@ -248,86 +202,12 @@ class File_Manager:
             data['mediaSet'].append(media_data)
         
         # Store this data in a file with the custom extension inside the project folder
-        logic_file_path = os.path.join(self.projectFolder, f"{self.projectName}{self.Logic_Extension}")
+        logic_file_path = os.path.join(self.projectFolder, 
+                                       f"{self.projectName}{self.Logic_Extension}")
         
         with open(logic_file_path, 'w') as file:
             json.dump(data, file, indent=4)
 
-class MediaInterface():
-    def __init__(self, media):
-        self.media:Media = media
-        self.previous = None
-        self.next = None
-    
-    def execute(self):
-        pass
-
-    def undo(self):
-        pass
-
-    def redo(self):
-        pass
-
-class AddElementToMedia(MediaInterface):
-    def __init__(self, media, addedElement):
-        super().__init__(media)
-        self.addedElement = addedElement
-
-    def execute(self):
-        if isinstance(self.addedElement, el.Element):
-            self.media.elements.append(self.addedElement)
-        else:
-            print('not an element')
-    
-    def undo(self):
-        self.media.elements.pop()
-        super().undo()
-    
-    def redo(self):
-        self.execute()
-        super().redo()
-
-class AddTextAttribute(MediaInterface):
-    def __init__(self, media, text):
-        super().__init__(media)
-        self.text = text
-    
-    def execute(self):
-        self.media.elements[-1].add_text_attribute(self.text)
-        super().execute()
-    
-    def undo(self):
-        self.media.elements[-1].remove_last_attribute()
-        super().undo()
-    
-    def redo(self):
-        self.execute()
-        super().redo()
-
-class MediaInvoker():
-    def __init__(self):
-        self.command_history = []
-        self.undo_stack = []
-    
-    def storeAndExecute(self, cmd):
-        cmd.execute()
-        self.command_history.append(cmd)
-        self.undo_stack.clear()
-    
-    def undo(self):
-        if not self.command_history:
-            return
-        cmd = self.command_history.pop() # added text
-        cmd.undo()
-        cmd2 = self.command_history.pop() # added element
-        cmd2.undo()
-        self.undo_stack.append(cmd)
-    
-    def redo(self):
-        if not self.undo_stack:
-            return
-        cmd = self.undo_stack.pop() # added element
-        cmd.redo()
-        cmd2 = self.undo_stack.pop() # added text
-        cmd2.redo()
-        self.command_history.append(cmd)
+    def get_all_image_paths(self) -> List[str]:
+        return [media.file_path for media in 
+                self.Current_Media_Set if media.type == "Image"]

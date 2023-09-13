@@ -9,7 +9,7 @@ from PyQt5 import uic
 
 BASEDIR = os.path.dirname(__file__)
 
-Ui_Logic_Window, logic_baseclass = uic.loadUiType(os.path.join(BASEDIR,'LP_Design02.ui' ))
+Ui_Logic_Window, logic_baseclass = uic.loadUiType(os.path.join(BASEDIR,'ui_files/LP_Design02.ui' ))
 
 # Main application logic
 class Logic_Window(logic_baseclass):
@@ -32,6 +32,7 @@ class Logic_Window(logic_baseclass):
             self.createTab = None
             self.menubarCode = None
             self.fileManager = None
+
             self.createdLineEdit = None
             self.createdLabel = None
             self.creationRGB = [0,0,255]
@@ -100,6 +101,7 @@ class Logic_Window(logic_baseclass):
             self.createdLineEdit.hide()
             self.createdLineEdit.deleteLater()
             self.createdLineEdit = None
+            self.ui.carouselView.updateRenderer()
     
     def changeMouseIcon(self, assetCall):
         icon_paths = {

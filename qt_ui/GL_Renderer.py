@@ -25,6 +25,8 @@ class GL_Renderer(QOpenGLWidget):
         self.setMouseTracking(True)
         self.c = (bckColor[0]/255, bckColor[1]/255, bckColor[2]/255, 1)
 
+        self.highlightedCanvasElement = None
+
         # ui movement stuff
         self.cameraPosition = (0, 0, -30)  # Initialize with default camera position
         self.zoomSpeed = 0.5 # speed of zooming in and out
@@ -43,6 +45,9 @@ class GL_Renderer(QOpenGLWidget):
 
     def initializeCanvasElements(self):
         for ce in self.canvasElements:
+            for ele in self.single.fileManager.Current_Media.get_elements():
+                if ce.parentElement == ele:
+                    ce.setParentElement(ele)
             ce.setCameraPos(self.cameraPosition)
             ce.initGeometry()
             ce.initializeTextures()
@@ -146,9 +151,8 @@ class GL_Renderer(QOpenGLWidget):
                         ex = e.attributes[posIndex+1][0]
                         ey = e.attributes[posIndex+1][1]
                         #add image for the point
-                        pointImage = Image(image_path=e.image, highlight=e.highlightImage,
-                                           width=self.iconSize, height=self.iconSize, 
-                                        position=(ex, ey, 0), isIcon=True)
+                        pointImage = Image(width=self.iconSize, height=self.iconSize, 
+                                           position=(ex, ey, 0), parentElement=e)
                         self.canvasElements.append(pointImage)
                         self.initializeGL()
                         self.paintGL()
@@ -257,6 +261,39 @@ class GL_Renderer(QOpenGLWidget):
                     log_single.fileManager.Current_Media.add_element(newPoint)
                     self.logSingle.makeLineEdit(self.eventX, self.eventY, 50, 30)
 
+    def mouseInOutCanvasElements(self, mouseX, mouseY, mouseInBound, mouseOutBound):
+        changed = False
+        mx, my = self.screenPosToGLPos(mouseX, mouseY)
+        for c in self.canvasElements:
+            if c.checkCollisionXY(mx, my):  # Modify the method to return True if changes are made
+                changed = True
+                if c.isHighlighted:
+                    self.highlightedCanvasElement = c
+                    mouseInBound(c, mouseX, mouseY)
+                else:
+                    self.highlightedCanvasElement = None
+                    mouseOutBound(c, mouseX, mouseY)
+        if changed:  # Only update OpenGL if changes were made
+            self.initializeGL()
+            self.paintGL()
+
+    def makeUILabel(self, canvasElement, mouseX, mouseY):
+        myEle = None
+        for e in self.single.fileManager.Current_Media.get_elements():
+            if e.localName == canvasElement.elementName:
+                myEle = e
+        if myEle is not None:
+            self.single.makeLabelAtPos(mouseX, mouseY, 
+                                    70, 20, myEle.getTextAttribute())
+    
+    def deleteUILabel(self, canvasElement, mouseX, mouseY):
+        self.single.deleteExistingLabel()
+
+    def deleteCanvasElement(self, canvasElement):
+        print('got in here')
+        delete_point_cmd = DeletePoint(self, canvasElement)
+        self.invoker.storeAndExecute(delete_point_cmd)
+
     def mousePressEvent(self, event):
         if event.button() == Qt.MiddleButton:
             self.isPanning = True
@@ -264,6 +301,9 @@ class GL_Renderer(QOpenGLWidget):
         if event.button() == Qt.LeftButton:
             add_point_cmd = AddPoint(self, self.single, event.x(), event.y())
             self.invoker.storeAndExecute(add_point_cmd)
+        if event.button() == Qt.RightButton:
+            if self.highlightedCanvasElement is not None:
+                self.deleteCanvasElement(self.highlightedCanvasElement)
     
     def mouseMoveEvent(self, event):
         if self.isPanning:
@@ -273,24 +313,8 @@ class GL_Renderer(QOpenGLWidget):
             self.lastMousePos = (event.x(), event.y())
             self.initializeGL()
             self.paintGL()
-        changed = False
-        for c in self.canvasElements:
-            mx, my = self.screenPosToGLPos(event.x(), event.y())
-            if c.checkCollisionXY(mx, my):  # Modify the method to return True if changes are made
-                changed = True
-                if c.isHighlighted:
-                    myEle = None
-                    for e in self.single.fileManager.Current_Media.get_elements():
-                        if e.localName == c.elementName:
-                            myEle = e
-                    if myEle is not None:
-                        self.single.makeLabelAtPos(event.x(), event.y(), 
-                                                70, 20, myEle.getTextAttribute())
-                else:
-                    self.single.deleteExistingLabel()
-        if changed:  # Only update OpenGL if changes were made
-            self.initializeGL()
-            self.paintGL()
+        self.mouseInOutCanvasElements(event.x(), event.y(), 
+                                 self.makeUILabel, self.deleteUILabel)
         
         super().mouseMoveEvent(event)
     
@@ -332,9 +356,8 @@ class AddPoint(RendererInterface):
                 newPoint.add_pos_attribute(nx, ny)
                 
                 # add image for the point
-                pointImage = Image(image_path=newPoint.image, highlight=newPoint.highlightImage,
-                                   width=self.renderer.iconSize, height=self.renderer.iconSize, 
-                                   position=(nx, ny, 0), isIcon=True, elementName=newPoint.localName)
+                pointImage = Image(width=self.renderer.iconSize, height=self.renderer.iconSize, 
+                                   position=(nx, ny, 0), parentElement=newPoint)
                 self.renderer.canvasElements.append(pointImage)
                 self.renderer.initializeGL()
                 self.renderer.paintGL()
@@ -347,6 +370,33 @@ class AddPoint(RendererInterface):
             self.renderer.canvasElements.pop()
         super().undo()
     
+    def redo(self):
+        self.execute()
+        super().redo()
+
+class DeletePoint(RendererInterface):
+    def __init__(self, renderer, canvasElement):
+        super().__init__(renderer)
+        self.canvaselement = canvasElement
+        self.ele_index_removed = None
+        self.canvas_index = None
+    def execute(self):
+        for canvas_index, c in enumerate(self.renderer.canvasElements):
+            if c == self.canvaselement:
+                self.canvas_index = canvas_index
+                for idx, e in enumerate(self.renderer.single.fileManager.Current_Media.get_elements()):
+                    if e.localName == self.canvaselement.elementName:
+                        self.ele_index_removed = idx
+                        self.renderer.single.fileManager.Current_Media.delete_element(e)
+                        break
+                self.renderer.canvasElements.remove(c)
+                self.renderer.single.clearNotNeeded()
+                break
+        super().execute()
+    def undo(self):
+        if self.canvas_index:
+            self.renderer.canvasElements.insert(self.canvas_index, self.canvaselement)
+        super().undo()
     def redo(self):
         self.execute()
         super().redo()

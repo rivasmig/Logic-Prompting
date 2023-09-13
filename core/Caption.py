@@ -1,102 +1,118 @@
-# You might need the `emoji` library for emoji recognition. You can install it via pip: pip install emoji
+from draw_elements import point, element
+from core import media
+import json
 
 class Caption:
     def __init__(self):
-        # Initialize all class variables
         self.total_caption_string = ""
         self.element_and_attribute_directory = {}
-        self.symbol_directory = {
-            '⟐': 'element',
-            'τ': 'text_description',
-            'χ': 'position',
-            'Δ': 'function_name',
-            'λ': 'logic_head',
-            #... add more symbols as needed
+        self.decimalPlaces = 4
+
+        # Dictionary of symbols
+        self.symbols = {
+            'element': '⟐',
+            'position': 'χ',
+            'text': 'τ',
+            'x_position': 'x@',
+            'y_position': 'y@',
+            'separation': '|'
         }
-    
-    def load_caption(self, txt_path):
-        """Load caption from a text file and populate element_and_attribute_directory."""
-        
-        # Read the file content
-        with open(txt_path, 'r') as file:
-            content = file.read()
-            
-            # Split elements based on '⟐' assuming elements are separated by '⟐'
-            elements = content.split('⟐')
-            
-            # Parse each element and identify attributes
-            for elem in elements:
-                # For simplicity, considering that each element starts with a text description followed by a position
-                text_description = elem.split('τ')[1]
-                position = elem.split('χ')[1] if 'χ' in elem else None
-                
-                self.element_and_attribute_directory[text_description] = {
-                    'description': text_description,
-                    'position': position
-                }
 
-                # Check if any unrecognized symbol exists
-                for symbol in elem:
-                    if symbol not in self.symbol_directory:
-                        raise ValueError(f"Unrecognized symbol: {symbol}")
-                        
-        self.total_caption_string = content
-                        
-    def clear_caption(self):
-        """Clear the caption string and directory."""
-        
-        self.total_caption_string = ""
+    def generate_caption_from_elements(self, elements: list):
         self.element_and_attribute_directory.clear()
-        
-    def add_element(self, element_name):
-        """Add an element to the directory."""
-        
-        self.element_and_attribute_directory[element_name] = {}
-         
-    def add_position_attribute(self, element_name, position):
-        """Add a position attribute to an element in the directory."""
-        
-        if not isinstance(position, tuple) or len(position) != 2:
-            raise ValueError("Position should be a tuple of (x, y).")
-        
-        formatted_position = f'x@{position[0]}y@{position[1]}'
-        
-        if element_name in self.element_and_attribute_directory:
-            self.element_and_attribute_directory[element_name]['position'] = formatted_position
-        else:
-            raise ValueError(f"Element {element_name} does not exist in the directory.")
+        for elem in elements:
+            description = elem.getTextAttribute()
+            position = None
+            unique_key = elem.localName  # Using the localName as a unique key
+            for i, attr in enumerate(elem.attributes):
+                if attr == "Position":
+                    position = elem.attributes[i+1]
 
-        
-    def add_descriptive_attribute(self, element_name, description):
-        """Add a description attribute to an element in the directory."""
-        
-        if element_name in self.element_and_attribute_directory:
-            self.element_and_attribute_directory[element_name]['description'] = description
-        else:
-            raise ValueError(f"Element {element_name} does not exist in the directory.")
-    
-    def get_caption(self):
-        """Generate the total caption string based on the element and attribute directory."""
-        
-        captions = []  # Create an empty list to hold individual captions
+            self.element_and_attribute_directory[unique_key] = {
+                'description': description,
+                'position': position
+            }
 
-        # Assuming the caption follows the provided format
-        for element, attributes in self.element_and_attribute_directory.items():
-            description = attributes.get('description', "")
-            position = attributes.get('position', "")
+        self.get_caption()
 
-            # Create element caption based on what attributes are present
-            element_caption = '⟐'
-            if description:
-                element_caption += f' τ {description} τ'
+    def load_caption(self, caption_string):
+        self.total_caption_string = caption_string
+        elements = caption_string.split(self.symbols['element'])[1:-1]
+
+        parsed_elements = []
+
+        for elem in elements:
+            description = elem.split(self.symbols['text'])[1].strip()
+            position_str = elem.split(self.symbols['position'])[1] if self.symbols['position'] in elem else None
+            position = (float(position_str.split(self.symbols['x_position'])[1].split(self.symbols['y_position'])[0]), 
+                        float(position_str.split(self.symbols['y_position'])[1])) if position_str else None
+
+            element_obj = point.Point()
+            element_obj.add_text_attribute(description)
             if position:
-                element_caption += f' χ{position}χ'
-            element_caption += ' ⟐'
-            
+                element_obj.add_pos_attribute(*position)
+
+            parsed_elements.append(element_obj)
+
+        return parsed_elements
+
+    def get_caption(self):
+        captions = []
+        for key, value in self.element_and_attribute_directory.items():
+            description = value.get('description')
+            position = value.get('position')
+            formatted_position = None
+            if position:
+                px, py = position
+                px = round(px, self.decimalPlaces)
+                py = round(py, self.decimalPlaces)
+                formatted_position = self.symbols['position'] + \
+                    self.symbols['x_position'] + str(px) + self.symbols['y_position'] + \
+                    str(py) + self.symbols['position']
+
+            element_caption = self.symbols['element']
+            if description:
+                element_caption += self.symbols['text'] + " " + description + " " + self.symbols['text']
+            if formatted_position:
+                element_caption += " " + formatted_position
+            element_caption += " " + self.symbols['element']
+
             captions.append(element_caption)
 
-        # Combine individual captions and ensure no trailing "|"
-        self.total_caption_string = '|'.join(captions)
+        self.total_caption_string = self.symbols['separation'].join(captions)
 
         return self.total_caption_string
+    
+    def load_caption_from_logic(self, logic_file_path: str):
+        # Open and read the logic file
+        with open(logic_file_path, 'r') as file:
+            logic_file_content = json.load(file)
+
+        # Extract elements from the current media based on currentMediaIndex
+        current_media_elements = logic_file_content['mediaSet'][logic_file_content['currentMediaIndex']]['elements']
+        
+        elements = []
+        for elem_data in current_media_elements:
+            element_obj = point.Point()
+            for i, attr in enumerate(elem_data['attributes']):
+                if attr == "Position":
+                    element_obj.add_pos_attribute(*elem_data['attributes'][i+1])
+                elif attr == "Text":
+                    element_obj.add_text_attribute(elem_data['attributes'][i+1])
+            elements.append(element_obj)
+        
+        # Generate the caption based on these elements
+        self.generate_caption_from_elements(elements)
+        return self.total_caption_string
+    
+    @staticmethod
+    def generate_caption_from_media(media_obj: media.Media) -> str:
+        # Create a Caption instance
+        caption_instance = Caption()
+        
+        # Use the elements from the media object to generate the caption
+        caption_instance.generate_caption_from_elements(media_obj.get_elements())
+        
+        # Return the generated caption
+        return caption_instance.total_caption_string
 

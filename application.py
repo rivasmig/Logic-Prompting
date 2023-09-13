@@ -18,7 +18,7 @@ def main():
     window.createTab = mt.CreateTab()
     window.menubarCode = mb.MenuBar()
     window.show()
-    window.tabResize() # for correct initial views
+    window.tabResize()
     sys.exit(app.exec())
 
 if __name__ == '__main__':

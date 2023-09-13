@@ -9,7 +9,7 @@ class Element():
         self.localName = self.generate_unique_string()
         self.attributes.append('Type')
     def generate_unique_string(self):
-        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
     def add_pos_attribute(self, x, y):
         self.attributes.append('Position')
         self.attributes.append((x,y))
@@ -20,7 +20,12 @@ class Element():
         self.attributes.pop()
         self.attributes.pop()
     def getTextAttribute(self):
-        if len(self.attributes) > 4:
-            return self.attributes[5]
+        if 'Text' in self.attributes:
+            return self.attributes[self.attributes.index('Text') + 1]
         else:
             return ''
+    def __eq__(self, other):
+        if isinstance(other, Element):
+            if other.localName == self.localName:
+                return True
+        return False

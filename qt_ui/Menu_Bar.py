@@ -77,8 +77,8 @@ class MenuBar():
             self.single.fileManager.Create_Logic_File()
 
     def thisUndo(self):
-        self.single.ui.carouselView.invoker.undo()
         self.single.fileManager.Current_Media.invoker.undo()
+        self.single.ui.carouselView.invoker.undo()
 
     def thisRedo(self):
         self.single.ui.carouselView.invoker.redo()

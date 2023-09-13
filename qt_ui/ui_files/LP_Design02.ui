@@ -570,7 +570,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../assets/icons/logic_icon16x16.png</normaloff>../assets/icons/logic_icon16x16.png</iconset>
+    <normaloff>../../assets/icons/logic_icon16x16.png</normaloff>../../assets/icons/logic_icon16x16.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -1525,7 +1525,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/target.png</normaloff>../assets/icons/target.png</iconset>
+               <normaloff>../../assets/icons/target.png</normaloff>../../assets/icons/target.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1587,7 +1587,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/bounding_box.png</normaloff>../assets/icons/bounding_box.png</iconset>
+               <normaloff>../../assets/icons/bounding_box.png</normaloff>../../assets/icons/bounding_box.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1649,7 +1649,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/polygon.png</normaloff>../assets/icons/polygon.png</iconset>
+               <normaloff>../../assets/icons/polygon.png</normaloff>../../assets/icons/polygon.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1711,7 +1711,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/curved_arrow.png</normaloff>../assets/icons/curved_arrow.png</iconset>
+               <normaloff>../../assets/icons/curved_arrow.png</normaloff>../../assets/icons/curved_arrow.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1773,7 +1773,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/gesture.png</normaloff>../assets/icons/gesture.png</iconset>
+               <normaloff>../../assets/icons/gesture.png</normaloff>../../assets/icons/gesture.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1869,7 +1869,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/play.png</normaloff>../assets/icons/play.png</iconset>
+               <normaloff>../../assets/icons/play.png</normaloff>../../assets/icons/play.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1934,7 +1934,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/forward.png</normaloff>../assets/icons/forward.png</iconset>
+               <normaloff>../../assets/icons/forward.png</normaloff>../../assets/icons/forward.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1996,7 +1996,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/rewind.png</normaloff>../assets/icons/rewind.png</iconset>
+               <normaloff>../../assets/icons/rewind.png</normaloff>../../assets/icons/rewind.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -2174,7 +2174,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/shapes.png</normaloff>../assets/icons/shapes.png</iconset>
+               <normaloff>../../assets/icons/shapes.png</normaloff>../../assets/icons/shapes.png</iconset>
              </property>
             </widget>
            </item>
@@ -2218,7 +2218,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/running.png</normaloff>../assets/icons/running.png</iconset>
+               <normaloff>../../assets/icons/running.png</normaloff>../../assets/icons/running.png</iconset>
              </property>
             </widget>
            </item>
@@ -2262,7 +2262,7 @@ QPushButton:pressed {
              </property>
              <property name="icon">
               <iconset>
-               <normaloff>../assets/icons/abstract.png</normaloff>../assets/icons/abstract.png</iconset>
+               <normaloff>../../assets/icons/abstract.png</normaloff>../../assets/icons/abstract.png</iconset>
              </property>
             </widget>
            </item>
@@ -3563,6 +3563,9 @@ QPushButton:pressed {
   <action name="actionImage_Media">
    <property name="text">
     <string>Image Media</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+I</string>
    </property>
   </action>
   <action name="actionPaste_2">
