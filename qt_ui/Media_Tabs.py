@@ -27,6 +27,18 @@ class LabelTab(GenericTab):
         self.single.ui.boxButton.clicked.connect(self.boxButtonClick)
         self.single.ui.polygonButton.clicked.connect(self.polygonButtonClick)
         self.single.ui.arrowButton.clicked.connect(self.arrowButtonClick)
+        self.single.ui.objectTypeButton.clicked.connect(self.objectTypeClick)
+        self.single.ui.actionTypeButton.clicked.connect(self.actionTypeClick)
+        self.single.ui.abstractTypeButton.clicked.connect(self.abstractTypeClick)
+    
+    def objectTypeClick(self):
+        self.single.fileManager.addedType = 'Object'
+
+    def actionTypeClick(self):
+        self.single.fileManager.addedType = 'Action'
+
+    def abstractTypeClick(self):
+        self.single.fileManager.addedType = 'Abstract'
 
     def initializeFunction(self):
         self.buttonConnections()

@@ -353,8 +353,10 @@ class AddPoint(RendererInterface):
             nx, ny = self.renderer.screenPosToGLPos(self.eventX, self.eventY)
             if draw_mode == 'Point':
                 newPoint = point.Point()
+                addedType = self.renderer.single.fileManager.addedType
+                if addedType is not None:
+                    newPoint.add_standardized_attribute(addedType)
                 newPoint.add_pos_attribute(nx, ny)
-                
                 # add image for the point
                 pointImage = Image(width=self.renderer.iconSize, height=self.renderer.iconSize, 
                                    position=(nx, ny, 0), parentElement=newPoint)

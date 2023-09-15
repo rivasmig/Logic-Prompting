@@ -16,6 +16,8 @@ class Element():
     def add_text_attribute(self, text):
         self.attributes.append('Text')
         self.attributes.append(text)
+    def add_standardized_attribute(self, text):
+        self.attributes.append(text)
     def remove_last_attribute(self):
         self.attributes.pop()
         self.attributes.pop()

@@ -1540,6 +1540,9 @@ QPushButton:pressed {
            </item>
            <item row="1" column="0">
             <widget class="QPushButton" name="boxButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="minimumSize">
               <size>
                <width>80</width>
@@ -1602,6 +1605,9 @@ QPushButton:pressed {
            </item>
            <item row="2" column="0">
             <widget class="QPushButton" name="polygonButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="minimumSize">
               <size>
                <width>80</width>
@@ -1664,6 +1670,9 @@ QPushButton:pressed {
            </item>
            <item row="3" column="0">
             <widget class="QPushButton" name="arrowButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="minimumSize">
               <size>
                <width>80</width>
@@ -2135,7 +2144,7 @@ QPushButton:pressed {
          <item row="0" column="0">
           <layout class="QGridLayout" name="gridLayout_6">
            <item row="0" column="0">
-            <widget class="QPushButton" name="objectButton">
+            <widget class="QPushButton" name="objectTypeButton">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -2179,7 +2188,7 @@ QPushButton:pressed {
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QPushButton" name="actionButton">
+            <widget class="QPushButton" name="actionTypeButton">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -2223,7 +2232,7 @@ QPushButton:pressed {
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QPushButton" name="ideaButton">
+            <widget class="QPushButton" name="abstractTypeButton">
              <property name="minimumSize">
               <size>
                <width>30</width>

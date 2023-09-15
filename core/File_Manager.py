@@ -14,7 +14,7 @@ class File_Manager:
     def __init__(self):
         self.Media_Types_and_Extensions = {
             'Generic': [],
-            'Image': ['.png', '.jpg', '.jpeg', 'webp'],
+            'Image': ['.png', '.jpg', '.jpeg', '.webp'],
             'Video': ['.mp4', '.webm'],
             'Sound': ['.mp3', '.wav'],
             'Text': ['.txt'],
@@ -22,6 +22,9 @@ class File_Manager:
         self.Current_Media_Set: List[Media] = []
         self.Current_Media_Index = -1
         self.Current_Media:Media = None
+
+        self.addedType = None
+
         self.Logic_Extension = '.logic'
         self.projectName = None
         self.projectFolder = None
@@ -30,7 +33,10 @@ class File_Manager:
         return len(self.Current_Media_Set)
 
     def get_media_file_path(self):
-        return self.Current_Media.file_path
+        if self.Current_Media is not None:
+            return self.Current_Media.file_path
+        else:
+            return None
     
     def get_media_path_by_index(self, index):
         if (index > -1) and (index < len(self.Current_Media_Set)):
@@ -48,11 +54,14 @@ class File_Manager:
             return None
 
     def determine_media_type(self, file_path):
-        extension = os.path.splitext(file_path)[-1]
-        for media_type, extensions in self.Media_Types_and_Extensions.items():
-            if extension in extensions:
-                return media_type
-        return 'Generic'
+        if file_path is not None:
+            extension = os.path.splitext(file_path)[-1]
+            for media_type, extensions in self.Media_Types_and_Extensions.items():
+                if extension in extensions:
+                    return media_type
+            return 'Generic'
+        else:
+            return None
 
     def reset_current(self, before: Media, after: Media, isCurrent: bool):
         if isCurrent:
@@ -79,30 +88,42 @@ class File_Manager:
 
     def Add_Media_By_Path(self, file_path):
         media = Media(self.determine_media_type(file_path), file_path)
+        media.addedType = self.addedType
         self.Current_Media_Set.append(media)
+
         if self.Current_Media is None:
             self.Current_Media = media
             self.Current_Media_Index = 0
-        print(self.get_media_length())
 
     def Delete_Media_By_Path(self, file_path):
-        copy_m = Media(self.determine_media_type(file_path), file_path)
-        for m in self.Current_Media_Set:
-            if copy_m == m:
-                self.Current_Media_Set.remove(m)
-                if self.Current_Media == m:
-                    prev_index = max(0, self.Current_Media_Index - 1)
-                    next_index = min(len(self.Current_Media_Set) - 1, 
-                                     self.Current_Media_Index + 1)
-                    self.reset_current(self.Current_Media_Set[prev_index], 
-                                       self.Current_Media_Set[next_index], True)
+        if file_path is not None:
+            copy_m = Media(self.determine_media_type(file_path), file_path)
+            index = 0
+            while index < len(self.Current_Media_Set):
+                m = self.Current_Media_Set[index]
+                if copy_m == m:
+                    self.Current_Media_Set.remove(m)
+                    if len(self.Current_Media_Set) <= 0:
+                        self.Current_Media_Index = -1
+                        self.Current_Media = None
+                        break
+                    if self.Current_Media == m:
+                        prev_index = max(0, self.Current_Media_Index - 1)
+                        next_index = min(len(self.Current_Media_Set), 
+                                        self.Current_Media_Index + 1)
+                        self.reset_current(
+                            self.Current_Media_Set[prev_index] if prev_index < len(self.Current_Media_Set) else None, 
+                            self.Current_Media_Set[next_index] if next_index < len(self.Current_Media_Set) else None, 
+                            True)
+                    else:
+                        prev_index = max(0, index - 1)
+                        next_index = min(len(self.Current_Media_Set), index)
+                        self.reset_current(
+                            self.Current_Media_Set[prev_index] if prev_index < len(self.Current_Media_Set) else None, 
+                            self.Current_Media_Set[next_index] if next_index < len(self.Current_Media_Set) else None,
+                            False)
                 else:
-                    index = self.Current_Media_Set.index(m)
-                    prev_index = max(0, index - 1)
-                    next_index = min(len(self.Current_Media_Set) - 1, index + 1)
-                    self.reset_current(self.Current_Media_Set[prev_index], 
-                                       self.Current_Media_Set[next_index],
-                                       False)
+                    index += 1
 
     def Add_Folder_Contents(self, folder_path):
         folder_contents = glob.glob(os.path.join(folder_path, '*'))
@@ -116,8 +137,7 @@ class File_Manager:
             # check if file has an acceptable extension
             if os.path.splitext(f)[-1] in acceptable_extensions:
                 self.Add_Media_By_Path(f)
-        if self.Current_Media_Index == -1:
-            self.Current_Media_Index = 0
+                print(f)
 
     def Delete_Folder_Contents(self, folder_path):
         folder_contents = glob.glob(os.path.join(folder_path, '*'))

@@ -2,10 +2,13 @@ from typing import List
 from draw_elements import element as el
 from draw_elements import point
 import os
+import random
+import string
 
 class Media:
     def __init__(self, type='Generic', file_path='', parent_folder=None, name=None):
         self.invoker = MediaInvoker()
+        self.localName = self.generate_unique_string()
         self.type = type
         self.file_path = file_path
         self.parent_folder = parent_folder
@@ -13,6 +16,7 @@ class Media:
         self.screen_position = (0,0)
         self.screen_widthHeight = (0,0)
         self.currentDrawMode = 'Select'
+        self.addedType = None
         self.currentBrushTrailImage = None
         self.elements: List[el.Element] = []
 
@@ -24,6 +28,9 @@ class Media:
 
         if self.name is None:
             self.name = os.path.basename(self.file_path)
+
+    def generate_unique_string(self):
+        return ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
 
     def add_element(self, element):
         add_element_cmd = AddElementToMedia(self, element)
@@ -57,9 +64,15 @@ class Media:
     
     def __eq__(self, other):
         if isinstance(other, Media):
-            return self.parent_folder == other.parent_folder and self.name == other.name
+            if self.localName == other.localName:
+                return True
+            else:
+                parentsMatch = self.parent_folder == other.parent_folder
+                elementAmountMatch = len(self.elements) == len(other.elements)
+                if parentsMatch and elementAmountMatch: # add attributes match later
+                    return True
+            
         return False
-
 
 class MediaInterface():
     def __init__(self, media):
