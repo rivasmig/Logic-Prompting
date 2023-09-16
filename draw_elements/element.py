@@ -16,7 +16,8 @@ class Element():
     def add_text_attribute(self, text):
         self.attributes.append('Text')
         self.attributes.append(text)
-    def add_standardized_attribute(self, text):
+    def add_non_standardized_attributes(self, text):
+        self.attributes.append('Other')
         self.attributes.append(text)
     def remove_last_attribute(self):
         self.attributes.pop()
@@ -26,6 +27,8 @@ class Element():
             return self.attributes[self.attributes.index('Text') + 1]
         else:
             return ''
+    def  get_non_standardized_attributes(self):
+        pass
     def __eq__(self, other):
         if isinstance(other, Element):
             if other.localName == self.localName:

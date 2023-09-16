@@ -23,7 +23,7 @@ class File_Manager:
         self.Current_Media_Index = -1
         self.Current_Media:Media = None
 
-        self.addedType = None
+        self.addedAttributes = None
 
         self.Logic_Extension = '.logic'
         self.projectName = None
@@ -88,7 +88,7 @@ class File_Manager:
 
     def Add_Media_By_Path(self, file_path):
         media = Media(self.determine_media_type(file_path), file_path)
-        media.addedType = self.addedType
+        media.addedAttributes = self.addedAttributes
         self.Current_Media_Set.append(media)
 
         if self.Current_Media is None:

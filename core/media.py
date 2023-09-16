@@ -16,7 +16,7 @@ class Media:
         self.screen_position = (0,0)
         self.screen_widthHeight = (0,0)
         self.currentDrawMode = 'Select'
-        self.addedType = None
+        self.addedAttributes = None
         self.currentBrushTrailImage = None
         self.elements: List[el.Element] = []
 

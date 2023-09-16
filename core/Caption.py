@@ -23,12 +23,16 @@ class Caption:
         for elem in elements:
             description = elem.getTextAttribute()
             position = None
+            other = None
             unique_key = elem.localName  # Using the localName as a unique key
             for i, attr in enumerate(elem.attributes):
                 if attr == "Position":
                     position = elem.attributes[i+1]
+                if attr == "Other":
+                    other = elem.attributes[i+1]
 
             self.element_and_attribute_directory[unique_key] = {
+                'other': other,
                 'description': description,
                 'position': position
             }
@@ -59,8 +63,10 @@ class Caption:
     def get_caption(self):
         captions = []
         for key, value in self.element_and_attribute_directory.items():
+            other = value.get('other')
             description = value.get('description')
             position = value.get('position')
+            
             formatted_position = None
             if position:
                 px, py = position
@@ -71,10 +77,14 @@ class Caption:
                     str(py) + self.symbols['position']
 
             element_caption = self.symbols['element']
+            
             if description:
                 element_caption += self.symbols['text'] + " " + description + " " + self.symbols['text']
             if formatted_position:
                 element_caption += " " + formatted_position
+            if other:
+                element_caption += " " + self.symbols['text'] + " " + other + " " + self.symbols['text']
+                
             element_caption += " " + self.symbols['element']
 
             captions.append(element_caption)
@@ -99,6 +109,8 @@ class Caption:
                     element_obj.add_pos_attribute(*elem_data['attributes'][i+1])
                 elif attr == "Text":
                     element_obj.add_text_attribute(elem_data['attributes'][i+1])
+                elif attr == "Other":  # Handle the 'other' attribute.
+                    element_obj.add_other_attribute(elem_data['attributes'][i+1])  # Assuming there's a method to add 'other' attribute.
             elements.append(element_obj)
         
         # Generate the caption based on these elements

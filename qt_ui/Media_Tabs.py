@@ -18,6 +18,11 @@ class LabelTab(GenericTab):
     def __init__(self):
         super().__init__()
         self.initializeFunction()
+        self.defaultButtonColor = self.single.ui.objectTypeButton.styleSheet()
+        self.selectedButtonColor = "background-color: green;"
+        self.buttonList = [self.single.ui.pointButton, self.single.ui.handButton, self.single.ui.boxButton, 
+                           self.single.ui.polygonButton, self.single.ui.arrowButton] 
+        self.typeButtonList = [self.single.ui.objectTypeButton, self.single.ui.actionTypeButton, self.single.ui.abstractTypeButton]
 
     def buttonConnections(self):
         self.single.ui.pointButton.clicked.connect(self.pointButtonClick)
@@ -31,14 +36,24 @@ class LabelTab(GenericTab):
         self.single.ui.actionTypeButton.clicked.connect(self.actionTypeClick)
         self.single.ui.abstractTypeButton.clicked.connect(self.abstractTypeClick)
     
+    def changeButtonColorAndResetOthers(self, button, buttonList):
+        for butt in buttonList:
+            if butt == button:
+                butt.setStyleSheet(self.selectedButtonColor)
+            else:
+                butt.setStyleSheet(self.defaultButtonColor)
+
     def objectTypeClick(self):
-        self.single.fileManager.addedType = 'Object'
+        self.changeButtonColorAndResetOthers(self.single.ui.objectTypeButton, self.typeButtonList)
+        self.single.fileManager.addedAttributes = 'Object'
 
     def actionTypeClick(self):
-        self.single.fileManager.addedType = 'Action'
+        self.changeButtonColorAndResetOthers(self.single.ui.actionTypeButton, self.typeButtonList)
+        self.single.fileManager.addedAttributes = 'Action'
 
     def abstractTypeClick(self):
-        self.single.fileManager.addedType = 'Abstract'
+        self.changeButtonColorAndResetOthers(self.single.ui.abstractTypeButton, self.typeButtonList)
+        self.single.fileManager.addedAttributes = 'Abstract'
 
     def initializeFunction(self):
         self.buttonConnections()
@@ -113,8 +128,6 @@ class LabelTab(GenericTab):
             curIndex = self.single.fileManager.get_media_index()
             self.single.fileManager.update_index(curIndex+1)
             self.single.ui.carouselView.updateRenderer()
-            self.single.changeMouseIcon('Default')
-            self.single.fileManager.Current_Media.set_draw_mode('Click')
         self.single.clearNotNeeded()
 
     def rewindButtonClick(self):
@@ -122,8 +135,6 @@ class LabelTab(GenericTab):
             curIndex = self.single.fileManager.get_media_index()
             self.single.fileManager.update_index(curIndex-1)
             self.single.ui.carouselView.updateRenderer()
-            self.single.changeMouseIcon('Default')
-            self.single.fileManager.Current_Media.set_draw_mode('Click')
         self.single.clearNotNeeded()
 
     def boxButtonClick(self):
