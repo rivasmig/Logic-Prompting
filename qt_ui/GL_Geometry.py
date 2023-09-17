@@ -66,7 +66,6 @@ class Image(BaseGeometry):
         self.activeImage = None
         self.isHighlighted = False
         self.elementName = None
-        
         if self.isIcon:
             self.image_path = parentElement.image
             self.highlightPath = parentElement.highlightImage

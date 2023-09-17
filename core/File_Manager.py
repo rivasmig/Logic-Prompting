@@ -137,7 +137,6 @@ class File_Manager:
             # check if file has an acceptable extension
             if os.path.splitext(f)[-1] in acceptable_extensions:
                 self.Add_Media_By_Path(f)
-                print(f)
 
     def Delete_Folder_Contents(self, folder_path):
         folder_contents = glob.glob(os.path.join(folder_path, '*'))

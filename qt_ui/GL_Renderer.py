@@ -290,7 +290,6 @@ class GL_Renderer(QOpenGLWidget):
         self.single.deleteExistingLabel()
 
     def deleteCanvasElement(self, canvasElement):
-        print('got in here')
         delete_point_cmd = DeletePoint(self, canvasElement)
         self.invoker.storeAndExecute(delete_point_cmd)
 

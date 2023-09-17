@@ -78,12 +78,12 @@ class Caption:
 
             element_caption = self.symbols['element']
             
-            if description:
-                element_caption += self.symbols['text'] + " " + description + " " + self.symbols['text']
-            if formatted_position:
-                element_caption += " " + formatted_position
             if other:
                 element_caption += " " + self.symbols['text'] + " " + other + " " + self.symbols['text']
+            if description:
+                element_caption += " " + self.symbols['text'] + " " + description + " " + self.symbols['text']
+            if formatted_position:
+                element_caption += " " + formatted_position
                 
             element_caption += " " + self.symbols['element']
 
