@@ -29,7 +29,6 @@ class TestFileManager(unittest.TestCase):
         self.single_media_file_manager = None
         self.all_images_file_manager = None
         self.random_index_file_manager = None
-        
 
     def tearDown(self):
         # Clean up the temporary directory after each test

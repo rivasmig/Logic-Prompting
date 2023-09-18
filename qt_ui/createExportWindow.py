@@ -105,8 +105,13 @@ class CreateExportWindow(export_baseclass):
             progress_dialog.setWindowModality(Qt.WindowModal)
             progress_dialog.show()
 
+            # Count the number of files in the target directory
+            existing_files_count = len(os.listdir(folder_path))
+            # Calculate the starting index for file naming
+            starting_index = existing_files_count // 2
+
             # Loop through the listOfImagePaths
-            for indx, (image_path, caption_text) in enumerate(zip(self.listOfImagePaths, self.listOfCaptions)):
+            for indx, (image_path, caption_text) in enumerate(zip(self.listOfImagePaths, self.listOfCaptions), start=starting_index):
                 # Update the progress dialog
                 progress_dialog.setValue(indx)
                 

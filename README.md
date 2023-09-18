@@ -68,7 +68,27 @@ Defining a function 'if near a car then happy else sad':
 Define two functions: one for a dog's color based on surroundings, and one for its activity. If a dog is near a pond, it's blue and swimming; if near a ball, it's yellow and playing.  
 ⟐ λ δ Δ 🌊🐶🎨 Δζ 🐶ζ Ω π Λ Λ χ🐶χ Λ χΘ pond Θχ Λ Λ Ψ near Ψ Λ πθ &τ blue τ& θ ε &τ yellow τ& ε Ω δ λ ⟐ | ⟐ λ δ Δ 🐶🎭 Δζ 🐶ζ Ω π Λ Λ χ🐶χ Λ χΘ pond Θχ Λ Λ Ψ near Ψ Λ πθ &τ swimming τ& θε π Λ Λ χ🐶χ Λ χΘ ball Θχ Λ Λ Ψ near Ψ Λ πθ &τ playing τ& θ ε Ω δ λ ⟐
 
-## Goals
+## Current Goals
+These are very temporary goals about improving the current ui, mainly for my own reference:
+- make the repo easy to download and install, with requirmenets.txt, and potentially a setup wizard if possible
+- with dreambooth, train SDXL model with some logic prompting data, and check results
+- incoreperate FastSAM (Segment Anything) into LP ui
+- incoreperate autocorrect into LP ui
+- incoreperate lines both straight and curved
+- incorperate some kind of box feature
+- work on easier and intuitive hotkeys for captioning
+- include 'overall description' or a text attribute that will overall describe the image
+  - incorperate BLIP2 to autogenerate text descriptions
+- optimize code, currently takes up lots of ram very quickly
+  - use map() instead of looping through lists
+  - seperate code more (specifically GL Renderer)
+  - store more data on temporary text files, instead of letting it all be on cache
+- set up user preferences
+  - ability to set up different hotkeys
+  - ability to set up different starting brushes and modes
+  - settings to limit amount of elements and attributes per media
+
+## Future Goals
 
 The goals for this repo is to have a centralized software with the following features:
   - easy to use logic prompting ui tools for captioning and creating media (images, video, sound, and hopefully someday - video games)
