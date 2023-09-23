@@ -1452,8 +1452,8 @@
        <widget class="QFrame" name="toolsFrame">
         <property name="geometry">
          <rect>
-          <x>50</x>
-          <y>30</y>
+          <x>20</x>
+          <y>60</y>
           <width>121</width>
           <height>481</height>
          </rect>
@@ -1474,7 +1474,7 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
-         <item row="0" column="0">
+         <item row="0" column="1">
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="0" column="0">
             <widget class="QPushButton" name="pointButton">
@@ -1802,8 +1802,8 @@ QPushButton:pressed {
        <widget class="QFrame" name="swapFrame">
         <property name="geometry">
          <rect>
-          <x>270</x>
-          <y>420</y>
+          <x>550</x>
+          <y>10</y>
           <width>391</width>
           <height>106</height>
          </rect>
@@ -2025,8 +2025,8 @@ QPushButton:pressed {
        <widget class="QFrame" name="actionTypeFrame">
         <property name="geometry">
          <rect>
-          <x>740</x>
-          <y>40</y>
+          <x>20</x>
+          <y>10</y>
           <width>161</width>
           <height>61</height>
          </rect>
@@ -2297,6 +2297,34 @@ QPushButton:pressed {
         <property name="lineWidth">
          <number>0</number>
         </property>
+       </widget>
+       <widget class="QScrollArea" name="descriptionsScrollArea">
+        <property name="geometry">
+         <rect>
+          <x>650</x>
+          <y>120</y>
+          <width>161</width>
+          <height>48</height>
+         </rect>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>159</width>
+           <height>46</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+           <widget class="QLineEdit" name="initialLineEdit"/>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="imageCreateMode">

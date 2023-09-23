@@ -71,7 +71,8 @@ Define two functions: one for a dog's color based on surroundings, and one for i
 ## Current Goals
 These are very temporary goals about improving the current ui, mainly for my own reference:
 - make the repo easy to download and install, with requirmenets.txt, and potentially a setup wizard if possible
-- with dreambooth, train SDXL model with some logic prompting data, and check results
+- figure out training method (Dreambooth won't work)
+  - most likely option is going to be using the SEED method
 - incoreperate FastSAM (Segment Anything) into LP ui
 - incoreperate autocorrect into LP ui
 - incoreperate lines both straight and curved

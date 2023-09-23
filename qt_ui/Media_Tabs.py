@@ -36,6 +36,9 @@ class LabelTab(GenericTab):
         self.single.ui.actionTypeButton.clicked.connect(self.actionTypeClick)
         self.single.ui.abstractTypeButton.clicked.connect(self.abstractTypeClick)
     
+    def descriptionEntered(self):
+        print("Pressed Enter")
+
     def changeButtonColorAndResetOthers(self, button, buttonList):
         for butt in buttonList:
             if butt == button:
@@ -99,19 +102,25 @@ class LabelTab(GenericTab):
         self.single.ui.actionTypeFrame.raise_()
         self.single.ui.swapFrame.raise_()
         self.single.ui.toolsFrame.raise_()
+        self.single.ui.descriptionsScrollArea.raise_()
 
     def thisResizeEvent(self):
         super().__init__()
         # Manually adjust the size of carouselView
         self.single.ui.carouselView.resize(self.single.ui.imageLabelMode.size())
-
+        self.single.ui.descriptionsScrollArea.setFixedWidth(self.single.ui.swapFrame.width())
         # Reposition the frames
-        # Here's an example: (Adjust as needed)
         self.single.ui.actionTypeFrame.move(self.resizeOffset, self.resizeOffset)  # Move to top-left corner of carouselView
         self.single.ui.swapFrame.move(self.single.ui.carouselView.width() - self.single.ui.swapFrame.width()
                                        - self.resizeOffset, self.resizeOffset)  # Top-right
         self.single.ui.toolsFrame.move(self.resizeOffset, self.single.ui.carouselView.height() - 
                                        self.single.ui.toolsFrame.height() - self.resizeOffset)  # Bottom-left
+        self.single.ui.descriptionsScrollArea.move(self.single.ui.carouselView.width() - self.single.ui.descriptionsScrollArea.width()
+                                                    - self.resizeOffset, self.single.ui.swapFrame.height() + self.resizeOffset)
+        
+        descriptionChildren = self.single.ui.descriptionsScrollArea.findChildren(qtw.QLineEdit)
+        for l in descriptionChildren:
+            l.setFixedWidth(round(self.single.ui.descriptionsScrollArea.width()/1.2) - round(self.resizeOffset/2))
 
     def pointButtonClick(self):
         if self.single.fileManager.Current_Media is not None:
@@ -151,7 +160,6 @@ class LabelTab(GenericTab):
         if self.single.fileManager.Current_Media is not None:
             self.single.changeMouseIcon('Diamond')
             self.single.fileManager.Current_Media.set_draw_mode('Arrow')
-
     
 
 class CreateTab(GenericTab):
